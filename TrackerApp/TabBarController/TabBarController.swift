@@ -17,7 +17,7 @@ final class TabBarController: UITabBarController {
         tabBar.unselectedItemTintColor = .YPGray
         
         tabBar.layer.borderWidth = 0.50
-        tabBar.layer.borderColor = UIColor.black.cgColor
+        tabBar.layer.borderColor = UIColor.YPGray.cgColor
         tabBar.clipsToBounds = true
         
         let trackerViewController = UINavigationController(rootViewController: TrackerViewController())

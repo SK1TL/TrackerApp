@@ -29,34 +29,35 @@ enum Resources {
     }
     
     // MARK: - Fonts
-    static func ypBold34() -> UIFont? {
-        UIFont.systemFont(ofSize: 34, weight: .bold)
+    enum Fonts {
+        static func ypBold34() -> UIFont? {
+            UIFont.systemFont(ofSize: 34, weight: .bold)
+        }
+        
+        static func ypBold32() -> UIFont? {
+            UIFont.systemFont(ofSize: 32, weight: .bold)
+        }
+        
+        static func ypBold19() -> UIFont? {
+            UIFont.systemFont(ofSize: 19, weight: .bold)
+        }
+        
+        static func ypRegular17() -> UIFont? {
+            UIFont.systemFont(ofSize: 17, weight: .regular)
+        }
+        
+        static func ypMedium16() -> UIFont? {
+            UIFont.systemFont(ofSize: 16, weight: .medium)
+        }
+        
+        static func ypMedium12() -> UIFont? {
+            UIFont.systemFont(ofSize: 12, weight: .medium)
+        }
+        
+        static func ypMedium10() -> UIFont? {
+            UIFont.systemFont(ofSize: 10, weight: .medium)
+        }
     }
-
-    static func ypBold32() -> UIFont? {
-        UIFont.systemFont(ofSize: 32, weight: .bold)
-    }
-
-    static func ypBold19() -> UIFont? {
-        UIFont.systemFont(ofSize: 19, weight: .bold)
-    }
-
-    static func ypRegular17() -> UIFont? {
-        UIFont.systemFont(ofSize: 17, weight: .regular)
-    }
-
-    static func ypMedium16() -> UIFont? {
-        UIFont.systemFont(ofSize: 16, weight: .medium)
-    }
-    
-    static func ypMedium12() -> UIFont? {
-        UIFont.systemFont(ofSize: 12, weight: .medium)
-    }
-
-    static func ypMedium10() -> UIFont? {
-        UIFont.systemFont(ofSize: 10, weight: .medium)
-    }
-    
     // MARK: - Colors
     static let colors: [UIColor] = [
         .ypColorSelection01, .ypColorSelection02, .ypColorSelection03, .ypColorSelection04, .ypColorSelection05,

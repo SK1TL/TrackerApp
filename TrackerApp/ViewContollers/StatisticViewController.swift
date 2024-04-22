@@ -27,7 +27,7 @@ final class StatisticViewController: UIViewController {
         navigationController?.navigationBar.tintColor = .YPBlack
         
         guard let emptyStatisticImage = Resources.Images.emptyStatistic else { return }
-        emptyView.configureView(image: emptyStatisticImage, text: "Статистика")
+        emptyView.configureView(image: emptyStatisticImage, text: "Анализировать пока нечего")
     }
     
     

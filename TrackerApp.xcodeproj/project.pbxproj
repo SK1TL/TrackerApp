@@ -27,6 +27,7 @@
 		850C38CB2BD6DF8B00DC9541 /* StatisticViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 850C38CA2BD6DF8B00DC9541 /* StatisticViewController.swift */; };
 		850C38CD2BD6DFAB00DC9541 /* TrackerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 850C38CC2BD6DFAB00DC9541 /* TrackerViewController.swift */; };
 		850C38D52BD6E37400DC9541 /* EmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 850C38D42BD6E37400DC9541 /* EmptyView.swift */; };
+		850C38D72BD6EDCA00DC9541 /* TrackerCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 850C38D62BD6EDCA00DC9541 /* TrackerCollectionViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -52,6 +53,7 @@
 		850C38CA2BD6DF8B00DC9541 /* StatisticViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticViewController.swift; sourceTree = "<group>"; };
 		850C38CC2BD6DFAB00DC9541 /* TrackerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerViewController.swift; sourceTree = "<group>"; };
 		850C38D42BD6E37400DC9541 /* EmptyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyView.swift; sourceTree = "<group>"; };
+		850C38D62BD6EDCA00DC9541 /* TrackerCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCollectionViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -145,6 +147,7 @@
 			children = (
 				850C38CC2BD6DFAB00DC9541 /* TrackerViewController.swift */,
 				850C38CA2BD6DF8B00DC9541 /* StatisticViewController.swift */,
+				850C38D62BD6EDCA00DC9541 /* TrackerCollectionViewCell.swift */,
 			);
 			path = ViewContollers;
 			sourceTree = "<group>";
@@ -227,6 +230,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				850C38D72BD6EDCA00DC9541 /* TrackerCollectionViewCell.swift in Sources */,
 				850C389F2BD6C43700DC9541 /* TrackerApp.xcdatamodeld in Sources */,
 				850C38B42BD6CCA000DC9541 /* WeekDays.swift in Sources */,
 				850C38AE2BD6CC3800DC9541 /* Tracker.swift in Sources */,

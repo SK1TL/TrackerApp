@@ -8,6 +8,6 @@
 import Foundation
 
 struct Identifier {
-    static let idTrackCell = "TrackerCollectionViewCell"
+    static let idTrackerCell = "TrackerCollectionViewCell"
     static let idHeader = "HeaderCollectionView"
 }
