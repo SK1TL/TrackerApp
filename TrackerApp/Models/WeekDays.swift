@@ -1,5 +1,5 @@
 //
-//  WeekDay.swift
+//  WeekDays.swift
 //  TrackerApp
 //
 //  Created by Артур Гайфуллин on 22.04.2024.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum WeekDay: String, Comparable, CaseIterable {
+enum WeekDays: String, Comparable, CaseIterable {
     case monday
     case tuesday
     case wednesday
@@ -92,7 +92,7 @@ enum WeekDay: String, Comparable, CaseIterable {
         }
     }
     
-    static func < (lhs: WeekDay, rhs: WeekDay) -> Bool {
+    static func < (lhs: WeekDays, rhs: WeekDays) -> Bool {
         return lhs.sortOrder < rhs.sortOrder
     }
 }
