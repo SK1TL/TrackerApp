@@ -59,7 +59,7 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
     
     private lazy var addButton: UIButton = {
         let button = UIButton()
-        button.setImage(Resources.SfSymbols.addCounter, for: .normal)
+        button.setTitle("+", for: .normal)
         button.setTitleColor(.YPWhite, for: .normal)
         button.layer.cornerRadius = 17
         button.layer.masksToBounds = true
@@ -120,8 +120,8 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
     }
     
     func configRecord(countDay: Int, isDoneToday: Bool) {
-        let image = isDoneToday ? Resources.SfSymbols.doneCounter : Resources.SfSymbols.addCounter
-        addButton.setImage(image, for: .normal)
+        let title = isDoneToday ? "✓" : "+"
+        addButton.setTitle(title, for: .normal)
         let opacity: Float = isDoneToday ? 0.3 : 1
         addButton.layer.opacity = opacity
         

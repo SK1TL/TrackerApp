@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum TypeTracker {
+enum TrackerType {
     case habitTracker
     case eventTracker
 }

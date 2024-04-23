@@ -65,7 +65,7 @@ enum Resources {
         .ypColorSelection11, .ypColorSelection12, .ypColorSelection13, .ypColorSelection14, .ypColorSelection15,
         .ypColorSelection16, .ypColorSelection17, .ypColorSelection18
     ]
-    static let emojis = [
+    static let emojis: [String] = [
         "🙂", "😻", "🌺", "🐶", "❤️", "😱", "😇", "😡", "🥶", "🤔", "🙌", "🍔", "🥦", "🏓", "🥇", "🎸", "🏝️", "😪"
     ]
     static let textFieldLimit = 38

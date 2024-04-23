@@ -20,7 +20,7 @@ final class TabBarController: UITabBarController {
         tabBar.layer.borderColor = UIColor.YPGray.cgColor
         tabBar.clipsToBounds = true
         
-        let trackerViewController = UINavigationController(rootViewController: TrackerViewController())
+        let trackerViewController = UINavigationController(rootViewController: TrackersViewController())
         
         trackerViewController.tabBarItem = UITabBarItem(
             title: "Трекеры",
