@@ -230,7 +230,6 @@ extension TrackersViewController: UICollectionViewDataSource {
 }
 
 // MARK: - UICollectionViewDelegateFlowLayout
-
 extension TrackersViewController: UICollectionViewDelegateFlowLayout {
     private var lineSpacing: CGFloat { return 16 }
     private var interitemSpacing: CGFloat { return 9 }
@@ -291,7 +290,6 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
 }
 
 // MARK: - TrackerCollectionViewCellDelegate
-
 extension TrackersViewController: TrackerCollectionViewCellDelegate {
     func didTapedDoneButton(cell: TrackerCollectionViewCell) {
         let indexPath: IndexPath = trackerCollectionView.indexPath(for: cell) ?? IndexPath()
@@ -299,15 +297,17 @@ extension TrackersViewController: TrackerCollectionViewCellDelegate {
         var daysCount = completedTrackers.filter { $0.id == id }.count
         let completedTracker = TrackerRecord(id: id, date: datePicker.date)
         
-        if  datePicker.date == Calendar.current.startOfDay(for: Date()) {
+        if datePicker.date == Calendar.current.startOfDay(for: Date()) {
             if !completedTrackers.contains(completedTracker) {
                 completedTrackers.insert(completedTracker)
                 daysCount += 1
                 cell.configRecord(countDay: daysCount, isDoneToday: true)
+                cell.updateCounter(daysCount)
             } else {
                 daysCount -= 1
                 cell.configRecord(countDay: daysCount, isDoneToday: false)
                 completedTrackers.remove(completedTracker)
+                cell.updateCounter(daysCount)
             }
         }
     }

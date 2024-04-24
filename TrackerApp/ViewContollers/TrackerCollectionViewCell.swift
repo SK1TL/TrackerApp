@@ -124,8 +124,17 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         addButton.setTitle(title, for: .normal)
         let opacity: Float = isDoneToday ? 0.3 : 1
         addButton.layer.opacity = opacity
-        
-        counterLabel.text = "\(countDay) Дней"
+    }
+    
+    func updateCounter(_ counter: Int) {
+        switch counter {
+        case _ where (1 == counter % 10) && !(10...19 ~= counter % 100):
+            counterLabel.text = String(counter) + " " + "День"
+        case _ where (2...4 ~= counter % 10) && !(10...19 ~= counter % 100):
+            counterLabel.text = String(counter) + " " + "Дня"
+        default:
+            counterLabel.text = String(counter) + " " + "Дней"
+        }
     }
     
     @objc func didTapedButton() {
