@@ -213,7 +213,7 @@ extension NewTrackerViewController: UITableViewDataSource {
     
     private func scheduleToString(for: [WeekDays]) -> String {
         guard schedule.count != WeekDays.allCases.count else { return "Каждый день" }
-
+        
         let scheduleSorted = schedule.sorted()
         let scheduleShortName = scheduleSorted.map { $0.shortName }.joined(separator: ", ")
         return scheduleShortName

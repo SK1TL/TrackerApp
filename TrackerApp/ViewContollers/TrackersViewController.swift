@@ -21,7 +21,6 @@ final class TrackersViewController: UIViewController {
         datePicker.datePickerMode = .date
         datePicker.locale = Locale(identifier: "ru_RU")
         datePicker.calendar.firstWeekday = 2
-        
         let calendar = Calendar.current
         let components = calendar.dateComponents([.day, .month, .year], from: Date())
         
@@ -30,7 +29,6 @@ final class TrackersViewController: UIViewController {
         dateComponents.month = components.month
         dateComponents.day = components.day
         datePicker.date = calendar.date(from: dateComponents) ?? Date()
-        
         datePicker.addTarget(self, action: #selector(handleDatePicker), for: .valueChanged)
         return datePicker
     }()
@@ -152,9 +150,24 @@ final class TrackersViewController: UIViewController {
         trackerCollectionView.reloadData()
     }
     
-    private func filterTreckerCategoryByDate(category: TrackerCategory) -> TrackerCategory {
-        let trackers = category.trackers.filter( { ($0.text.contains(textOfSearchQuery) || textOfSearchQuery.isEmpty) && ($0.schedule.contains(where: { $0.dayNumberOfWeek == currentDate.dayNumberOfWeek() }))})
-        let filterCategory = TrackerCategory(title: category.title, trackers: trackers)
+    private func filterTreckerCategoryByDate(
+        category: TrackerCategory
+    ) -> TrackerCategory {
+        let trackers = category.trackers.filter({
+            (
+                $0.text.contains(
+                    textOfSearchQuery
+                ) || textOfSearchQuery.isEmpty
+            ) && (
+                $0.schedule.contains(where: {
+                    $0.dayNumberOfWeek == currentDate.dayNumberOfWeek()
+                })
+            )
+        })
+        let filterCategory = TrackerCategory(
+            title: category.title,
+            trackers: trackers
+        )
         return filterCategory
     }
     
@@ -197,7 +210,7 @@ extension TrackersViewController: UICollectionViewDataSource {
         ) as? TrackerCollectionViewCell else {
             return UICollectionViewCell()
         }
-
+        
         let tracker = visibleCategories[indexPath.section].trackers[indexPath.row]
         let daysCount = completedTrackers.filter{$0.id == tracker.id}.count
         let isDoneToday = completedTrackers.contains(where: {$0.date == currentDate})
@@ -205,7 +218,7 @@ extension TrackersViewController: UICollectionViewDataSource {
         cell.configeCell(tracker: tracker)
         cell.configRecord(countDay: daysCount, isDoneToday: isDoneToday)
         return cell
-      }
+    }
     
     func collectionView(
         _ collectionView: UICollectionView,
@@ -326,16 +339,18 @@ extension TrackersViewController: CreateTrackerViewCntrollerDelegate {
                 currentDay = 8
             }
             let newSchedule = WeekDays.allCases[currentDay - 2]
-            let updatedTracker = Tracker(id: trackerCategory.trackers[0].id,
-                                           text: trackerCategory.trackers[0].text,
-                                           emoji: trackerCategory.trackers[0].emoji,
-                                           color: trackerCategory.trackers[0].color,
-                                           schedule: trackerCategory.trackers[0].schedule + [newSchedule])
-             
-             var updatedTrackers = trackerCategory.trackers
-             updatedTrackers[0] = updatedTracker
-             
-             trackerCategory = TrackerCategory(title: trackerCategory.title, trackers: updatedTrackers)
+            let updatedTracker = Tracker(
+                id: trackerCategory.trackers[0].id,
+                text: trackerCategory.trackers[0].text,
+                emoji: trackerCategory.trackers[0].emoji,
+                color: trackerCategory.trackers[0].color,
+                schedule: trackerCategory.trackers[0].schedule + [newSchedule]
+            )
+            
+            var updatedTrackers = trackerCategory.trackers
+            updatedTrackers[0] = updatedTracker
+            
+            trackerCategory = TrackerCategory(title: trackerCategory.title, trackers: updatedTrackers)
         }
         
         if categories.contains(where: { $0.title == trackerCategory.title}) {
