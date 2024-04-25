@@ -310,7 +310,7 @@ extension TrackersViewController: TrackerCollectionViewCellDelegate {
         var daysCount = completedTrackers.filter { $0.id == id }.count
         let completedTracker = TrackerRecord(id: id, date: datePicker.date)
         
-        if datePicker.date == Calendar.current.startOfDay(for: Date()) {
+        if datePicker.date == Calendar.current.startOfDay(for: currentDate) {
             if !completedTrackers.contains(completedTracker) {
                 completedTrackers.insert(completedTracker)
                 daysCount += 1
