@@ -94,6 +94,7 @@
 		850C38932BD6C43700DC9541 /* TrackerApp */ = {
 			isa = PBXGroup;
 			children = (
+				85A202822BE422A100841099 /* CoreData */,
 				850C38D32BD6E36700DC9541 /* Views */,
 				850C38AB2BD6CBA700DC9541 /* Application */,
 				850C38AC2BD6CC1C00DC9541 /* Models */,
@@ -103,7 +104,6 @@
 				850C38A02BD6C43900DC9541 /* Assets.xcassets */,
 				850C38A22BD6C43900DC9541 /* LaunchScreen.storyboard */,
 				850C38A52BD6C43900DC9541 /* Info.plist */,
-				850C389D2BD6C43700DC9541 /* TrackerApp.xcdatamodeld */,
 			);
 			path = TrackerApp;
 			sourceTree = "<group>";
@@ -170,6 +170,14 @@
 				850C38D42BD6E37400DC9541 /* EmptyView.swift */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		85A202822BE422A100841099 /* CoreData */ = {
+			isa = PBXGroup;
+			children = (
+				850C389D2BD6C43700DC9541 /* TrackerApp.xcdatamodeld */,
+			);
+			path = CoreData;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
