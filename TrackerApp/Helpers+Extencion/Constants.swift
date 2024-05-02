@@ -10,4 +10,6 @@ import Foundation
 struct Identifier {
     static let idTrackerCell = "TrackerCollectionViewCell"
     static let idHeader = "HeaderCollectionView"
+    static let idEmojiAndColorsCell = "EmojiAndColorsCollectionCell"
+    static let idSupply = "Header"
 }

@@ -14,6 +14,9 @@ final class TrackersViewController: UIViewController {
     private var categories: [TrackerCategory] = []
     private var visibleCategories: [TrackerCategory] = []
     private var textOfSearchQuery = ""
+    private let trackerCategoryStore = TrackerCategoryStore()
+    private let trackerRecordStore = TrackerRecordStore()
+    private var formattedCurrentDate = Date().dateFormatter()
     
     private lazy var datePicker: UIDatePicker = {
         let datePicker = UIDatePicker()
@@ -84,6 +87,9 @@ final class TrackersViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .YPWhite
+        
+        completedTrackers = trackerRecordStore.records
+        categories = trackerCategoryStore.categories
         setupBar()
         addSubviews()
         setupViews()
@@ -141,7 +147,8 @@ final class TrackersViewController: UIViewController {
         categoriesFiltered = categoriesFiltered.filter { !$0.trackers.isEmpty }
         if categoriesFiltered.isEmpty {
             if textOfSearchQuery.isEmpty {
-                // Todo: испарвить потом согласно макету на "Ничего не найдено"
+                infoLabel.isHidden = false
+                infoImageView.isHidden = false
                 infoLabel.text = "Ничего не найдено"
                 infoImageView.image = Resources.Images.emptySearch
             }
@@ -150,24 +157,16 @@ final class TrackersViewController: UIViewController {
         trackerCollectionView.reloadData()
     }
     
-    private func filterTreckerCategoryByDate(
-        category: TrackerCategory
-    ) -> TrackerCategory {
-        let trackers = category.trackers.filter({
-            (
-                $0.text.contains(
-                    textOfSearchQuery
-                ) || textOfSearchQuery.isEmpty
-            ) && (
-                $0.schedule.contains(where: {
-                    $0.dayNumberOfWeek == currentDate.dayNumberOfWeek()
-                })
-            )
-        })
-        let filterCategory = TrackerCategory(
-            title: category.title,
-            trackers: trackers
-        )
+    private func filterTreckerCategoryByDate(category: TrackerCategory) -> TrackerCategory {
+        let trackers = category.trackers.filter {
+            guard !$0.schedule.isEmpty else { return true }
+            let textContainsSearchQuery = $0.text.contains(textOfSearchQuery) || textOfSearchQuery.isEmpty
+            let scheduleСontainsChosenDate = $0.schedule.contains(where: { $0.dayNumberOfWeek == currentDate.dayNumberOfWeek() })
+            
+            return textContainsSearchQuery && scheduleСontainsChosenDate
+        }
+        
+        let filterCategory = TrackerCategory(title: category.title, trackers: trackers)
         return filterCategory
     }
     
@@ -181,6 +180,7 @@ final class TrackersViewController: UIViewController {
     
     @objc private func handleDatePicker() {
         currentDate = datePicker.date
+        formattedCurrentDate = currentDate.dateFormatter()
         self.dismiss(animated: false)
         updateVisibleCategories()
     }
@@ -213,7 +213,7 @@ extension TrackersViewController: UICollectionViewDataSource {
         
         let tracker = visibleCategories[indexPath.section].trackers[indexPath.row]
         let daysCount = completedTrackers.filter{$0.id == tracker.id}.count
-        let isDoneToday = completedTrackers.contains(where: {$0.date == currentDate})
+        let isDoneToday = completedTrackers.contains(where: {$0.id == tracker.id && $0.date == formattedCurrentDate })
         cell.delegate = self
         cell.configeCell(tracker: tracker)
         cell.configRecord(countDay: daysCount, isDoneToday: isDoneToday)
@@ -305,22 +305,33 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
 // MARK: - TrackerCollectionViewCellDelegate
 extension TrackersViewController: TrackerCollectionViewCellDelegate {
     func didTapedDoneButton(cell: TrackerCollectionViewCell) {
-        let indexPath: IndexPath = trackerCollectionView.indexPath(for: cell) ?? IndexPath()
-        let id = visibleCategories[indexPath.section].trackers[indexPath.row].id
-        var daysCount = completedTrackers.filter { $0.id == id }.count
-        let completedTracker = TrackerRecord(id: id, date: datePicker.date)
+        guard let indexPath = trackerCollectionView.indexPath(for: cell) else {
+            return
+        }
         
-        if datePicker.date == Calendar.current.startOfDay(for: currentDate) {
-            if !completedTrackers.contains(completedTracker) {
+        let tracker = visibleCategories[indexPath.section].trackers[indexPath.row]
+        let id = tracker.id
+        let formattedDate = formattedCurrentDate
+        
+        let hasTrackerRecord = completedTrackers.contains { record in
+            return record.id == id && record.date == formattedDate
+        }
+        
+        if datePicker.date <= Calendar.current.startOfDay(for: Date()) {
+            if !hasTrackerRecord {
+                let completedTracker = TrackerRecord(id: id, date: formattedDate)
+                try? trackerRecordStore.add(completedTracker)
                 completedTrackers.insert(completedTracker)
-                daysCount += 1
+                
+                let daysCount = completedTrackers.filter { $0.id == id }.count
                 cell.configRecord(countDay: daysCount, isDoneToday: true)
-                cell.updateCounter(daysCount)
             } else {
-                daysCount -= 1
-                cell.configRecord(countDay: daysCount, isDoneToday: false)
+                let completedTracker = TrackerRecord(id: id, date: formattedDate)
+                try? trackerRecordStore.remove(completedTracker)
                 completedTrackers.remove(completedTracker)
-                cell.updateCounter(daysCount)
+                
+                let daysCount = completedTrackers.filter { $0.id == id }.count
+                cell.configRecord(countDay: daysCount, isDoneToday: false)
             }
         }
     }
@@ -331,38 +342,9 @@ extension TrackersViewController: TrackerCollectionViewCellDelegate {
 extension TrackersViewController: CreateTrackerViewCntrollerDelegate {
     func addNewTrackerCategory(_ newTrackerCategory: TrackerCategory) {
         dismiss(animated: true)
-        var trackerCategory = newTrackerCategory
-        if trackerCategory.trackers[0].schedule.isEmpty {
-            guard let numberDay = currentDate.dayNumberOfWeek() else { return }
-            var currentDay = numberDay
-            if numberDay == 1 {
-                currentDay = 8
-            }
-            let newSchedule = WeekDays.allCases[currentDay - 2]
-            let updatedTracker = Tracker(
-                id: trackerCategory.trackers[0].id,
-                text: trackerCategory.trackers[0].text,
-                emoji: trackerCategory.trackers[0].emoji,
-                color: trackerCategory.trackers[0].color,
-                schedule: trackerCategory.trackers[0].schedule + [newSchedule]
-            )
-            
-            var updatedTrackers = trackerCategory.trackers
-            updatedTrackers[0] = updatedTracker
-            
-            trackerCategory = TrackerCategory(title: trackerCategory.title, trackers: updatedTrackers)
-        }
+        try? trackerCategoryStore.saveTracker(tracker: newTrackerCategory.trackers[0], to: newTrackerCategory.title)
+        categories = trackerCategoryStore.categories
         
-        if categories.contains(where: { $0.title == trackerCategory.title}) {
-            guard let index = categories.firstIndex(where: { $0.title == trackerCategory.title }) else { return }
-            let oldCategory = categories[index]
-            let updatedTrackers = oldCategory.trackers + trackerCategory.trackers
-            let updatedTrackerByСategory = TrackerCategory(title: trackerCategory.title, trackers: updatedTrackers)
-            
-            categories[index] = updatedTrackerByСategory
-        } else {
-            categories.append(trackerCategory)
-        }
         trackerCollectionView.reloadData()
         updateVisibleCategories()
     }
