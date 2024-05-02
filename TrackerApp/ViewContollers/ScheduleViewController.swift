@@ -14,7 +14,7 @@ protocol ScheduleViewControllerDelegate: AnyObject {
 final class ScheduleViewController: UIViewController, UITableViewDelegate {
     
     weak var delegate: ScheduleViewControllerDelegate?
-    private var switchDays: [WeekDays] = []
+    var switchDays: [WeekDays] = []
     private var week = WeekDays.allCases
     
     private lazy var titleLabel: UILabel = {
