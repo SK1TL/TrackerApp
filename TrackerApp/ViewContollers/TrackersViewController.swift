@@ -16,7 +16,6 @@ final class TrackersViewController: UIViewController {
     private var textOfSearchQuery = ""
     private let trackerCategoryStore = TrackerCategoryStore()
     private let trackerRecordStore = TrackerRecordStore()
-    private var formattedCurrentDate = Date().dateFormatter()
     
     private lazy var datePicker: UIDatePicker = {
         let datePicker = UIDatePicker()
@@ -47,21 +46,11 @@ final class TrackersViewController: UIViewController {
         return searchController
     }()
     
-    private lazy var infoImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = UIImage(named: "searchError")
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        return imageView
-    }()
-    
-    private let infoLabel: UILabel = {
-        let label = UILabel()
-        label.text = "Ничего не найдено"
-        label.font = Resources.Fonts.ypMedium12()
-        label.textAlignment = .center
-        label.textColor = .YPBlack
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
+    private lazy var emptyView: EmptyView = {
+        let emptyView = EmptyView()
+        emptyView.translatesAutoresizingMaskIntoConstraints = false
+        emptyView.configureView(image: Resources.Images.emptyTrackers!, text: "Что будем отслеживать?")
+        return emptyView
     }()
     
     private lazy var trackerCollectionView: UICollectionView = {
@@ -87,7 +76,6 @@ final class TrackersViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .YPWhite
-        
         completedTrackers = trackerRecordStore.records
         categories = trackerCategoryStore.categories
         setupBar()
@@ -98,21 +86,14 @@ final class TrackersViewController: UIViewController {
     
     // MARK: - Configure constraints / Add subviews
     private func addSubviews() {
-        view.addSubview(infoImageView)
-        view.addSubview(infoLabel)
+        view.addSubview(emptyView)
         view.addSubview(trackerCollectionView)
     }
     
     private func makeConstraints() {
         NSLayoutConstraint.activate([
-            infoImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            infoImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            infoImageView.widthAnchor.constraint(equalToConstant: 80),
-            infoImageView.heightAnchor.constraint(equalToConstant: 80),
-            
-            infoLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            infoLabel.topAnchor.constraint(equalTo: infoImageView.bottomAnchor, constant: 8),
-            infoLabel.heightAnchor.constraint(equalToConstant: 18),
+            emptyView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            emptyView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             
             trackerCollectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             trackerCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -126,31 +107,37 @@ final class TrackersViewController: UIViewController {
     private func setupBar() {
         navigationItem.title = "Трекеры"
         navigationController?.navigationBar.prefersLargeTitles = true
-        navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "plus"),
-                                                           style: .plain,
-                                                           target: self,
-                                                           action: #selector(addTracker))
+        navigationItem.leftBarButtonItem = UIBarButtonItem(
+            image: UIImage(systemName: "plus"),
+            style: .plain,
+            target: self,
+            action: #selector(addTracker)
+        )
         navigationItem.leftBarButtonItem?.tintColor = .YPBlack
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
         navigationItem.searchController = searchBar
     }
     
     private func setupViews() {
-        trackerCollectionView.isHidden = categories.isEmpty
-        infoLabel.isHidden = !categories.isEmpty
-        infoLabel.text = "Что будем отслеживать?"
-        infoImageView.image = Resources.Images.emptyTrackers
+        if categories.isEmpty {
+            trackerCollectionView.isHidden = true
+            emptyView.isHidden = false
+            emptyView.configureView(image: Resources.Images.emptyTrackers!, text: "Что будем отслеживать?")
+        } else {
+            trackerCollectionView.isHidden = false
+            emptyView.isHidden = true
+            updateVisibleCategories()
+        }
     }
     
     private func updateVisibleCategories() {
+        guard !categories.isEmpty else { return }
         var categoriesFiltered = categories.map { filterTreckerCategoryByDate(category: $0) }
         categoriesFiltered = categoriesFiltered.filter { !$0.trackers.isEmpty }
         if categoriesFiltered.isEmpty {
-            if textOfSearchQuery.isEmpty {
-                infoLabel.isHidden = false
-                infoImageView.isHidden = false
-                infoLabel.text = "Ничего не найдено"
-                infoImageView.image = Resources.Images.emptySearch
+            if !textOfSearchQuery.isEmpty {
+                emptyView.isHidden = false
+                emptyView.configureView(image: Resources.Images.emptySearch!, text: "Ничего не найдено")
             }
         }
         visibleCategories = categoriesFiltered
@@ -161,17 +148,16 @@ final class TrackersViewController: UIViewController {
         let trackers = category.trackers.filter {
             guard !$0.schedule.isEmpty else { return true }
             let textContainsSearchQuery = $0.text.contains(textOfSearchQuery) || textOfSearchQuery.isEmpty
-            let scheduleСontainsChosenDate = $0.schedule.contains(where: { $0.dayNumberOfWeek == currentDate.dayNumberOfWeek() })
+            let scheduleСontainsChosenDate = $0.schedule.contains(where: {
+                $0.dayNumberOfWeek == currentDate.dayNumberOfWeek
+            })
             
             return textContainsSearchQuery && scheduleСontainsChosenDate
         }
-        
-        let filterCategory = TrackerCategory(title: category.title, trackers: trackers)
-        return filterCategory
+        return TrackerCategory(title: category.title, trackers: trackers)
     }
     
     // MARK: - Action private funс
-    
     @objc private func addTracker() {
         let typeNewTrackerVC = CreateTrackerViewCntroller(categories: categories)
         typeNewTrackerVC.delegate = self
@@ -180,7 +166,6 @@ final class TrackersViewController: UIViewController {
     
     @objc private func handleDatePicker() {
         currentDate = datePicker.date
-        formattedCurrentDate = currentDate.dateFormatter()
         self.dismiss(animated: false)
         updateVisibleCategories()
     }
@@ -213,7 +198,9 @@ extension TrackersViewController: UICollectionViewDataSource {
         
         let tracker = visibleCategories[indexPath.section].trackers[indexPath.row]
         let daysCount = completedTrackers.filter{$0.id == tracker.id}.count
-        let isDoneToday = completedTrackers.contains(where: {$0.id == tracker.id && $0.date == formattedCurrentDate })
+        let isDoneToday = completedTrackers.contains(
+            where: {$0.id == tracker.id && $0.date == currentDate.formattedDate }
+        )
         cell.delegate = self
         cell.configeCell(tracker: tracker)
         cell.configRecord(countDay: daysCount, isDoneToday: isDoneToday)
@@ -237,16 +224,16 @@ extension TrackersViewController: UICollectionViewDataSource {
     }
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        trackerCollectionView.isHidden = visibleCategories.count == 0
+        trackerCollectionView.isHidden = visibleCategories.count == .zero
         return visibleCategories.count
     }
 }
 
 // MARK: - UICollectionViewDelegateFlowLayout
 extension TrackersViewController: UICollectionViewDelegateFlowLayout {
-    private var lineSpacing: CGFloat { return 16 }
-    private var interitemSpacing: CGFloat { return 9 }
-    private var sideInset: CGFloat { return 16 }
+    private var lineSpacing: CGFloat { 16 }
+    private var interitemSpacing: CGFloat { 9 }
+    private var sideInset: CGFloat { 16 }
     
     func collectionView(
         _ collectionView: UICollectionView,
@@ -271,8 +258,10 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
         )
         
         return headerView.systemLayoutSizeFitting(
-            CGSize(width: collectionView.frame.width,
-                   height: UIView.layoutFittingExpandedSize.height),
+            CGSize(
+                width: collectionView.frame.width,
+                height: UIView.layoutFittingExpandedSize.height
+            ),
             withHorizontalFittingPriority: .required,
             verticalFittingPriority: .fittingSizeLevel
         )
@@ -311,7 +300,7 @@ extension TrackersViewController: TrackerCollectionViewCellDelegate {
         
         let tracker = visibleCategories[indexPath.section].trackers[indexPath.row]
         let id = tracker.id
-        let formattedDate = formattedCurrentDate
+        let formattedDate = currentDate.formattedDate
         
         let hasTrackerRecord = completedTrackers.contains { record in
             return record.id == id && record.date == formattedDate

@@ -49,7 +49,11 @@ final class TrackerRecordStore: NSObject {
     
     func remove(_ record: TrackerRecord) throws {
         let request = NSFetchRequest<TrackerRecordCoreData>(entityName: "TrackerRecordCoreData")
-        request.predicate = NSPredicate(format: "%K == %@",#keyPath(TrackerRecordCoreData.recordId),record.id.uuidString)
+        request.predicate = NSPredicate(
+            format: "%K == %@",
+            #keyPath(TrackerRecordCoreData.recordId),
+            record.id.uuidString
+        )
         let records = try context.fetch(request)
         guard let recordToRemove = records.first else { return }
         context.delete(recordToRemove)

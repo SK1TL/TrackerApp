@@ -38,9 +38,12 @@ final class NewTrackerViewController: UIViewController {
         label.textColor = .YPBlack
         label.translatesAutoresizingMaskIntoConstraints = false
         switch trackerType {
-        case .habitTracker: label.text = "Новая привычка"
-        case .eventTracker: label.text = "Новое нерегулярное событие"
-        case .none: break
+        case .habitTracker: 
+            label.text = "Новая привычка"
+        case .eventTracker: 
+            label.text = "Новое нерегулярное событие"
+        case .none: 
+            break
         }
         return label
     }()
@@ -133,9 +136,12 @@ final class NewTrackerViewController: UIViewController {
     
     private func makeConstraints() {
         switch trackerType {
-        case .eventTracker: heightTableView = 74
-        case .habitTracker: heightTableView = 149
-        case .none: break
+        case .eventTracker:
+            heightTableView = 74
+        case .habitTracker:
+            heightTableView = 149
+        case .none:
+            break
         }
         
         NSLayoutConstraint.activate([
@@ -194,7 +200,7 @@ final class NewTrackerViewController: UIViewController {
     }
     
     private func buttonIsEnabled() {
-        if textField.text?.isEmpty == false && ((currentCategory?.isEmpty != nil)) {
+        if textField.text?.isEmpty == false && currentCategory?.isEmpty != nil {
             saveButton.backgroundColor = .YPBlack
             saveButton.setTitleColor(.YPWhite, for: .normal)
             saveButton.isEnabled = true
@@ -209,17 +215,18 @@ final class NewTrackerViewController: UIViewController {
     
     @objc private func createButtonTapped() {
         dismiss(animated: true)
-        let trackerName = textField.text ?? ""
         delegate?.addNewTrackerCategory(
             TrackerCategory(
                 title: "Новая категория",
-                trackers: [Tracker.init(
-                    id: UUID(),
-                    text: trackerName,
-                    emoji: emoji,
-                    color: color,
-                    schedule: schedule
-                )]
+                trackers: [
+                    Tracker(
+                        id: UUID(),
+                        text: textField.text ?? "",
+                        emoji: emoji,
+                        color: color,
+                        schedule: schedule
+                    )
+                ]
             )
         )
     }
@@ -229,9 +236,12 @@ final class NewTrackerViewController: UIViewController {
 extension NewTrackerViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch trackerType {
-        case .habitTracker: return 2
-        case .eventTracker: return 1
-        case .none: return 0
+        case .habitTracker:
+            return 2
+        case .eventTracker: 
+            return 1
+        case .none: 
+            return 0
         }
     }
     
@@ -278,7 +288,6 @@ extension NewTrackerViewController: UITextFieldDelegate {
     }
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        
         if range.location == 0 && string == " " {
             return false
         }

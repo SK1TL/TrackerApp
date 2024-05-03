@@ -142,7 +142,7 @@ extension EmojiAndColorsCollection: UICollectionViewDelegateFlowLayout {
         layout collectionViewLayout: UICollectionViewLayout,
         minimumInteritemSpacingForSectionAt section: Int
     ) -> CGFloat {
-        return params.cellSpacing
+        params.cellSpacing
     }
     
     func collectionView(
@@ -150,7 +150,7 @@ extension EmojiAndColorsCollection: UICollectionViewDelegateFlowLayout {
         layout collectionViewLayout: UICollectionViewLayout,
         minimumLineSpacingForSectionAt section: Int
     ) -> CGFloat {
-        return params.cellSpacing
+        params.cellSpacing
     }
 }
 
@@ -161,24 +161,22 @@ extension EmojiAndColorsCollection: UICollectionViewDelegate {
             switch indexPath.section {
             case 0:
                 for item in 0..<collectionView.numberOfItems(inSection: 0){
-                    guard let cell = collectionView.cellForItem(at: IndexPath(row: item, section: 0))
+                    guard 
+                        let cell = collectionView.cellForItem(at: IndexPath(row: item, section: 0))
                     else { return }
                     cell.backgroundColor = .clear
                 }
                 cell.backgroundColor = .YPLightGray
                 delegate?.addNewEmoji(cell.label.text ?? "")
-                
             case 1:
                 for item in 0..<collectionView.numberOfItems(inSection: 1) {
                     guard let cell = collectionView.cellForItem(at: IndexPath(row: item, section: 1)) else { return }
                     cell.backgroundColor = .clear
                     cell.layer.borderWidth = 0
                 }
-                
                 cell.layer.borderColor = cell.contentView.backgroundColor?.withAlphaComponent(0.3).cgColor
                 cell.layer.borderWidth = 3
                 delegate?.addNewColor(cell.contentView.backgroundColor ?? .clear)
-                
             default:
                 break
             }

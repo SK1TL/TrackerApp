@@ -120,20 +120,19 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
     }
     
     func configRecord(countDay: Int, isDoneToday: Bool) {
-        let title = isDoneToday ? "✓" : "+"
-        addButton.setTitle(title, for: .normal)
-        let opacity: Float = isDoneToday ? 0.3 : 1
-        addButton.layer.opacity = opacity
+        addButton.setTitle(isDoneToday ? "✓" : "+", for: .normal)        
+        addButton.layer.opacity = isDoneToday ? 0.3 : 1
+        updateCounter(countDay)
     }
     
-    func updateCounter(_ counter: Int) {
+    private func updateCounter(_ counter: Int) {
         switch counter {
         case _ where (1 == counter % 10) && !(10...19 ~= counter % 100):
-            counterLabel.text = String(counter) + " " + "День"
+            counterLabel.text = String(counter) + " " + "день"
         case _ where (2...4 ~= counter % 10) && !(10...19 ~= counter % 100):
-            counterLabel.text = String(counter) + " " + "Дня"
+            counterLabel.text = String(counter) + " " + "дня"
         default:
-            counterLabel.text = String(counter) + " " + "Дней"
+            counterLabel.text = String(counter) + " " + "дней"
         }
     }
     

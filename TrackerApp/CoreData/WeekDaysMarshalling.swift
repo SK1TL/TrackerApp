@@ -10,13 +10,11 @@ import Foundation
 final class WeekDaysMarshalling {
     
     func convertWeekDaysToString(_ days: [WeekDays]) -> String {
-        let shedule = days.map{ $0.rawValue + " "}.joined()
-        return shedule
+        days.map{ $0.rawValue + " "}.joined()
     }
     
     func convertStringToWeekDays(_ string: String?) -> [WeekDays] {
-        guard let sheduleStringArray = string?.components(separatedBy: [" "]) else { return []}
-        let sheduleArray = sheduleStringArray.compactMap{ WeekDays(rawValue: $0) }
-        return sheduleArray
+        guard let sheduleStringArray = string?.components(separatedBy: [" "]) else { return [] }
+        return sheduleStringArray.compactMap { WeekDays(rawValue: $0) }
     }
 }

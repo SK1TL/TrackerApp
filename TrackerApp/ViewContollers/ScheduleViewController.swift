@@ -133,12 +133,7 @@ extension ScheduleViewController: UITableViewDataSource {
     // MARK: - Private func
     private func buttonIsEnabled(_ isOn: Bool) {
         completedButton.isEnabled = isOn
-        if isOn {
-            completedButton.backgroundColor = .YPBlack
-            completedButton.setTitleColor(.YPWhite, for: .normal)
-        } else {
-            completedButton.backgroundColor = .YPGray
-            completedButton.setTitleColor(.YPWhite, for: .normal)
-        }
+        completedButton.backgroundColor = isOn ? .YPBlack : .YPGray        
+        completedButton.setTitleColor(.YPWhite, for: .normal)
     }
 }

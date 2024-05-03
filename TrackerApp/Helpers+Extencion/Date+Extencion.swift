@@ -8,18 +8,22 @@
 import Foundation
 
 extension Date {
-    func dateFormatter() -> String {
+    private var dateFormatter: DateFormatter {
         let dateFormatter = DateFormatter()
         dateFormatter.dateStyle = .short
         dateFormatter.timeStyle = .none
-        return dateFormatter.string(from: self)
+        return dateFormatter
     }
     
-    func dayNumberOfWeek() -> Int? {
-        return Calendar.current.dateComponents([.weekday], from: self).weekday
+    var formattedDate: String {
+        dateFormatter.string(from: self)
     }
     
-    func dayNumber() -> Int? {
-        return Calendar.current.dateComponents([.day, .month, .year], from: self).day
+    var dayNumberOfWeek: Int? {
+        Calendar.current.dateComponents([.weekday], from: self).weekday
+    }
+    
+    var dayNumber: Int? {
+        Calendar.current.dateComponents([.day, .month, .year], from: self).day
     }
 }
