@@ -49,4 +49,8 @@ final class EmojiAndColorsCollectionCell: UICollectionViewCell {
             label.centerYAnchor.constraint(equalTo: centerYAnchor)
         ])
     }
+    
+    func updateLabel(text: String) {
+        label.text = text
+    }
 }

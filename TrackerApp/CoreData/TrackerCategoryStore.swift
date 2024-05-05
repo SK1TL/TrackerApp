@@ -18,7 +18,11 @@ final class TrackerCategoryStore: NSObject {
     private let trackerStore = TrackerStore()
     
     convenience override init() {
-        let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+        guard let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext else {
+            fatalError(
+                "TrackerCategoryStore Error"
+            )
+        }
         self.init(context: context)
     }
     
@@ -29,7 +33,12 @@ final class TrackerCategoryStore: NSObject {
     private lazy var fetchedResultsController: NSFetchedResultsController<TrackerCategoryCoreData> = {
         let fetchRequest = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
         fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \TrackerCategoryCoreData.categoryTitle, ascending: true)]
-        let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
+        let fetchedResultsController = NSFetchedResultsController(
+            fetchRequest: fetchRequest,
+            managedObjectContext: context,
+            sectionNameKeyPath: nil,
+            cacheName: nil
+        )
         fetchedResultsController.delegate = self
         try? fetchedResultsController.performFetch()
         
@@ -110,9 +119,6 @@ final class TrackerCategoryStore: NSObject {
 }
 
 extension TrackerCategoryStore: NSFetchedResultsControllerDelegate {
-    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-    }
-    
     func controller(
         _ controller: NSFetchedResultsController<NSFetchRequestResult>,
         didChange anObject: Any,
@@ -122,7 +128,7 @@ extension TrackerCategoryStore: NSFetchedResultsControllerDelegate {
     ) {
         switch type {
         case .insert:
-            guard let indexPath else { fatalError() }
+            guard let indexPath = newIndexPath else { fatalError() }
             insertedIndexes?.insert(indexPath.item)
         case .delete:
             guard let indexPath else { fatalError() }
