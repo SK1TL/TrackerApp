@@ -17,22 +17,28 @@ extension UIColor {
     static var YPLightGray: UIColor { UIColor(named: "ypLightGray") ?? UIColor.lightGray }
     static var YPWhite: UIColor { UIColor(named: "ypWhite") ?? UIColor.white }
     static var YPWhiteAlpha: UIColor { UIColor(named: "ypWhiteAlpha") ?? UIColor.lightGray }
-    static var YPSelection01: UIColor { UIColor(named: "ypColorSelection01") ?? UIColor.blue }
-    static var YPSelection02: UIColor { UIColor(named: "ypColorSelection02") ?? UIColor.blue }
-    static var YPSelection03: UIColor { UIColor(named: "ypColorSelection03") ?? UIColor.blue }
-    static var YPSelection04: UIColor { UIColor(named: "ypColorSelection04") ?? UIColor.blue }
-    static var YPSelection05: UIColor { UIColor(named: "ypColorSelection05") ?? UIColor.blue }
-    static var YPSelection06: UIColor { UIColor(named: "ypColorSelection06") ?? UIColor.blue }
-    static var YPSelection07: UIColor { UIColor(named: "ypColorSelection07") ?? UIColor.blue }
-    static var YPSelection08: UIColor { UIColor(named: "ypColorSelection08") ?? UIColor.blue }
-    static var YPSelection09: UIColor { UIColor(named: "ypColorSelection09") ?? UIColor.blue }
-    static var YPSelection10: UIColor { UIColor(named: "ypColorSelection10") ?? UIColor.green }
-    static var YPSelection11: UIColor { UIColor(named: "ypColorSelection11") ?? UIColor.green }
-    static var YPSelection12: UIColor { UIColor(named: "ypColorSelection12") ?? UIColor.green }
-    static var YPSelection13: UIColor { UIColor(named: "ypColorSelection13") ?? UIColor.green }
-    static var YPSelection14: UIColor { UIColor(named: "ypColorSelection14") ?? UIColor.green }
-    static var YPSelection15: UIColor { UIColor(named: "ypColorSelection15") ?? UIColor.green }
-    static var YPSelection16: UIColor { UIColor(named: "ypColorSelection16") ?? UIColor.green }
-    static var YPSelection17: UIColor { UIColor(named: "ypColorSelection17") ?? UIColor.green }
-    static var YPSelection18: UIColor { UIColor(named: "ypColorSelection18") ?? UIColor.green }
+    
+    static func hexString(from color: UIColor) -> String {
+        let components = color.cgColor.components
+        let r: CGFloat = components?[0] ?? 0.0
+        let g: CGFloat = components?[1] ?? 0.0
+        let b: CGFloat = components?[2] ?? 0.0
+        return String.init(
+            format: "%02lX%02lX%02lX",
+            lroundf(Float(r * 255)),
+            lroundf(Float(g * 255)),
+            lroundf(Float(b * 255))
+        )
+    }
+
+    static func color(from hex: String) -> UIColor {
+        var rgbValue:UInt64 = 0
+        Scanner(string: hex).scanHexInt64(&rgbValue)
+        return UIColor(
+            red: CGFloat((rgbValue & 0xFF0000) >> 16) / 255.0,
+            green: CGFloat((rgbValue & 0x00FF00) >> 8) / 255.0,
+            blue: CGFloat(rgbValue & 0x0000FF) / 255.0,
+            alpha: CGFloat(1.0)
+        )
+    }
 }

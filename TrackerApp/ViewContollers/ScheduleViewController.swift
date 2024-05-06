@@ -14,7 +14,7 @@ protocol ScheduleViewControllerDelegate: AnyObject {
 final class ScheduleViewController: UIViewController, UITableViewDelegate {
     
     weak var delegate: ScheduleViewControllerDelegate?
-    private var switchDays: [WeekDays] = []
+    var switchDays: [WeekDays] = []
     private var week = WeekDays.allCases
     
     private lazy var titleLabel: UILabel = {
@@ -133,12 +133,7 @@ extension ScheduleViewController: UITableViewDataSource {
     // MARK: - Private func
     private func buttonIsEnabled(_ isOn: Bool) {
         completedButton.isEnabled = isOn
-        if isOn {
-            completedButton.backgroundColor = .YPBlack
-            completedButton.setTitleColor(.YPWhite, for: .normal)
-        } else {
-            completedButton.backgroundColor = .YPGray
-            completedButton.setTitleColor(.YPWhite, for: .normal)
-        }
+        completedButton.backgroundColor = isOn ? .YPBlack : .YPGray        
+        completedButton.setTitleColor(.YPWhite, for: .normal)
     }
 }
