@@ -11,7 +11,7 @@ final class EmojiAndColorsCollectionCell: UICollectionViewCell {
     
     static var reuseIdentifier = Identifier.idEmojiAndColorsCell
     
-    lazy var label: UILabel = {
+    private lazy var label: UILabel = {
         let label = UILabel()
         label.font = Resources.Fonts.ypBold32()
         label.text = ""
@@ -19,6 +19,10 @@ final class EmojiAndColorsCollectionCell: UICollectionViewCell {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
+    
+    var labelText: String? {
+        label.text
+    }
     
     override func layoutSubviews() {
         super.layoutSubviews()

@@ -56,10 +56,10 @@ extension EmojiAndColorsCollection: UICollectionViewDataSource {
         switch indexPath.section {
         case 0:
             cell.layer.cornerRadius = 16
-            cell.label.text = emojis[indexPath.row]
+            cell.updateLabel(text: emojis[indexPath.row])
         case 1:
             cell.layer.cornerRadius = 13
-            cell.label.text = ""
+            cell.updateLabel(text: "")
             cell.contentView.backgroundColor = colors[indexPath.row]
         default:
             break
@@ -167,7 +167,7 @@ extension EmojiAndColorsCollection: UICollectionViewDelegate {
                     cell.backgroundColor = .clear
                 }
                 cell.backgroundColor = .YPLightGray
-                delegate?.addNewEmoji(cell.label.text ?? "")
+                delegate?.addNewEmoji(cell.labelText ?? "")
             case 1:
                 for item in 0..<collectionView.numberOfItems(inSection: 1) {
                     guard let cell = collectionView.cellForItem(at: IndexPath(row: item, section: 1)) else { return }
