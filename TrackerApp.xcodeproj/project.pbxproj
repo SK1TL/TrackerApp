@@ -42,6 +42,9 @@
 		85A202952BE426D200841099 /* EmojiAndColorsCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85A202942BE426D200841099 /* EmojiAndColorsCollection.swift */; };
 		85A202972BE426F900841099 /* SupplementaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85A202962BE426F900841099 /* SupplementaryView.swift */; };
 		85A202992BE4271D00841099 /* GeometricParams.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85A202982BE4271D00841099 /* GeometricParams.swift */; };
+		85A2030F2BF2A4F800841099 /* Pages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85A2030E2BF2A4F800841099 /* Pages.swift */; };
+		85A203112BF2BC2200841099 /* OnboardingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85A203102BF2BC2200841099 /* OnboardingViewController.swift */; };
+		85A203132BF2BCD300841099 /* PageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85A203122BF2BCD300841099 /* PageViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -82,6 +85,9 @@
 		85A202942BE426D200841099 /* EmojiAndColorsCollection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiAndColorsCollection.swift; sourceTree = "<group>"; };
 		85A202962BE426F900841099 /* SupplementaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupplementaryView.swift; sourceTree = "<group>"; };
 		85A202982BE4271D00841099 /* GeometricParams.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeometricParams.swift; sourceTree = "<group>"; };
+		85A2030E2BF2A4F800841099 /* Pages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pages.swift; sourceTree = "<group>"; };
+		85A203102BF2BC2200841099 /* OnboardingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewController.swift; sourceTree = "<group>"; };
+		85A203122BF2BCD300841099 /* PageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -114,10 +120,11 @@
 		850C38932BD6C43700DC9541 /* TrackerApp */ = {
 			isa = PBXGroup;
 			children = (
+				850C38AB2BD6CBA700DC9541 /* Application */,
+				85A2030D2BF2A4D900841099 /* Onboarding */,
 				85A2028F2BE425C300841099 /* Cell */,
 				85A202822BE422A100841099 /* CoreData */,
 				850C38D32BD6E36700DC9541 /* Views */,
-				850C38AB2BD6CBA700DC9541 /* Application */,
 				850C38AC2BD6CC1C00DC9541 /* Models */,
 				850C38B72BD6CE4E00DC9541 /* TabBarController */,
 				850C38C92BD6DF5D00DC9541 /* ViewContollers */,
@@ -218,6 +225,16 @@
 			path = Cell;
 			sourceTree = "<group>";
 		};
+		85A2030D2BF2A4D900841099 /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				85A2030E2BF2A4F800841099 /* Pages.swift */,
+				85A203102BF2BC2200841099 /* OnboardingViewController.swift */,
+				85A203122BF2BCD300841099 /* PageViewController.swift */,
+			);
+			path = Onboarding;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -303,6 +320,8 @@
 				85A202952BE426D200841099 /* EmojiAndColorsCollection.swift in Sources */,
 				85A202882BE4248300841099 /* TrackerCategoryStore.swift in Sources */,
 				850C38DB2BD8205C00DC9541 /* CreateTrackerViewCntroller.swift in Sources */,
+				85A203132BF2BCD300841099 /* PageViewController.swift in Sources */,
+				85A2030F2BF2A4F800841099 /* Pages.swift in Sources */,
 				85A202992BE4271D00841099 /* GeometricParams.swift in Sources */,
 				850C38C82BD6DA6900DC9541 /* Constants.swift in Sources */,
 				850C38DD2BD8249200DC9541 /* ScheduleViewController.swift in Sources */,
@@ -319,6 +338,7 @@
 				85A2028C2BE424A500841099 /* WeekDaysMarshalling.swift in Sources */,
 				850C38B02BD6CC4800DC9541 /* TrackerRecord.swift in Sources */,
 				850C38B22BD6CC5800DC9541 /* TrackerCategory.swift in Sources */,
+				85A203112BF2BC2200841099 /* OnboardingViewController.swift in Sources */,
 				850C38B62BD6CD9000DC9541 /* TrackerType.swift in Sources */,
 				850C38CB2BD6DF8B00DC9541 /* StatisticViewController.swift in Sources */,
 			);
