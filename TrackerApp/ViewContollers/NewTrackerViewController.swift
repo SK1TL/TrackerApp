@@ -315,6 +315,7 @@ extension NewTrackerViewController: UITextFieldDelegate {
         if range.location == 0 && string == " " {
             return false
         }
+        chosenName = true
         switch trackerType {
         case .habitTracker:
             if schedule.isEmpty == false {
@@ -335,6 +336,7 @@ extension NewTrackerViewController: UITextFieldDelegate {
             saveButton.backgroundColor = .YPGray
             saveButton.setTitleColor(.YPWhite, for: .normal)
             saveButton.isEnabled = false
+            chosenName = false
         }
     }
 }
@@ -344,7 +346,12 @@ extension NewTrackerViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch indexPath.row {
         case 0:
-            break
+            guard let categoriesVC = CategoriesAssembly().assemle(
+                    with: CategoryConfiguration(lastCategory: lastCategory)
+            ) as? CategoriesViewController
+            else { return }
+            categoriesVC.delegate = self
+            present(categoriesVC, animated: true)
         case 1:
             let scheduleVC = ScheduleViewController()
             scheduleVC.delegate = self
@@ -361,6 +368,7 @@ extension NewTrackerViewController: ScheduleViewControllerDelegate {
     func addNewSchedule(_ newSchedule: [WeekDays]) {
         schedule = newSchedule
         switchDays = newSchedule
+        chosenSchedule = true
         tableView.reloadData()
         buttonIsEnabled()
     }
@@ -370,9 +378,23 @@ extension NewTrackerViewController: ScheduleViewControllerDelegate {
 extension NewTrackerViewController: EmojiAndColorsCollectionDelegate {
     func addNewEmoji(_ emoji: String) {
         self.emoji = emoji
+        chosenEmoji = true
+        buttonIsEnabled()
     }
     
     func addNewColor(_ color: UIColor) {
         self.color = color
+        chosenColor = true
+        buttonIsEnabled()
+    }
+}
+
+// MARK: - CategoriesViewControllerDelegate
+extension NewTrackerViewController: CategoriesViewControllerDelegate {
+    func didSelectCategory(with name: String?) {
+        lastCategory = name ?? ""
+        chosenCategory = true
+        buttonIsEnabled()
+        tableView.reloadData()
     }
 }
