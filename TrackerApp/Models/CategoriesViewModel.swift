@@ -7,6 +7,10 @@
 
 import Foundation
 
+protocol TrackerCategoryStoreDelegate: AnyObject {
+    func storeDidUpdate(_ store: TrackerCategoryStore)
+}
+
 final class CategoriesViewModel {
     @Observable
     private(set) var categories: [TrackerCategory]?

@@ -114,7 +114,35 @@ final class TrackerCategoryStore: NSObject {
             let nsError = error as NSError
              fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
         }
+    }
+    
+    func makeCategory(with label: String) throws {
+        let category = TrackerCategory(title: label, trackers: [])
+        let categoryCoreData = TrackerCategoryCoreData(context: context)
+        categoryCoreData.categoryTitle = category.title
+        categoryCoreData.trackers = NSSet(array: category.trackers)
         
+        try context.save()
+    }
+    
+    func deleteCategory(with category: TrackerCategory) throws {
+        if let category = try fetchCategory(with: category.title) {
+            context.delete(category)
+        }
+        
+        try context.save()
+    }
+    
+    func editCategory(from existingLabel: String, with label: String) throws {
+        guard let existingCategoryCD = try? fetchCategory(with: existingLabel) else { return }
+        try makeCategory(with: label)
+        guard let updatedCategoryCD = try? fetchCategory(with: label) else { return }
+        
+        updatedCategoryCD.trackers = existingCategoryCD.trackers
+        try context.save()
+        
+        guard let category = try? fetchCategories(from: existingCategoryCD) else { return }
+        try deleteCategory(with: category)
     }
 }
 

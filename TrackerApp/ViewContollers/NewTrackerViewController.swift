@@ -24,6 +24,7 @@ final class NewTrackerViewController: UIViewController {
     private var trackerText = ""
     private var emoji = ""
     private var color: UIColor = .clear
+    private var lastCategory = ""
     
     private var chosenName = false
     private var chosenCategory = false
@@ -206,10 +207,27 @@ final class NewTrackerViewController: UIViewController {
     }
     
     private func buttonIsEnabled() {
-        if textField.text?.isEmpty == false && currentCategory?.isEmpty != nil {
-            saveButton.backgroundColor = .YPBlack
-            saveButton.setTitleColor(.YPWhite, for: .normal)
-            saveButton.isEnabled = true
+        switch trackerType {
+        case .habitTracker:
+            if chosenName == true && chosenCategory == true && chosenSchedule == true && chosenEmoji == true && chosenColor == true {
+                saveButton.backgroundColor = .YPBlack
+                saveButton.setTitleColor(.YPWhite, for: .normal)
+                saveButton.isEnabled = true
+            } else {
+                saveButton.backgroundColor = .YPGray
+                saveButton.setTitleColor(.white, for: .normal)
+            }
+            
+        case .eventTracker:
+            if chosenName == true && chosenCategory == true && chosenEmoji == true && chosenColor == true {
+                saveButton.backgroundColor = .YPBlack
+                saveButton.setTitleColor(.YPWhite, for: .normal)
+                saveButton.isEnabled = true
+            } else {
+                saveButton.backgroundColor = .YPGray
+                saveButton.setTitleColor(.white, for: .normal)
+            }
+        case .none: break
         }
     }
     
