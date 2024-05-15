@@ -25,6 +25,12 @@ final class NewTrackerViewController: UIViewController {
     private var emoji = ""
     private var color: UIColor = .clear
     
+    private var chosenName = false
+    private var chosenCategory = false
+    private var chosenSchedule = false
+    private var chosenEmoji = false
+    private var chosenColor = false
+    
     private lazy var scrollView: UIScrollView = {
         let scroll = UIScrollView()
         scroll.backgroundColor = .YPWhite

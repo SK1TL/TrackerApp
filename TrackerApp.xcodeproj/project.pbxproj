@@ -45,6 +45,12 @@
 		85A2030F2BF2A4F800841099 /* Pages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85A2030E2BF2A4F800841099 /* Pages.swift */; };
 		85A203112BF2BC2200841099 /* OnboardingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85A203102BF2BC2200841099 /* OnboardingViewController.swift */; };
 		85A203132BF2BCD300841099 /* PageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85A203122BF2BCD300841099 /* PageViewController.swift */; };
+		85A203372BF40BC600841099 /* AlertPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85A203362BF40BC600841099 /* AlertPresenter.swift */; };
+		85A203392BF40CC200841099 /* Observable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85A203382BF40CC200841099 /* Observable.swift */; };
+		85A2033B2BF40D1D00841099 /* CategoriesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85A2033A2BF40D1D00841099 /* CategoriesViewModel.swift */; };
+		85A2033D2BF510EA00841099 /* NewCategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85A2033C2BF510EA00841099 /* NewCategoryViewController.swift */; };
+		85A2033F2BF511A600841099 /* CategoriesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85A2033E2BF511A600841099 /* CategoriesViewController.swift */; };
+		85A203412BF5129B00841099 /* CategoriesAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85A203402BF5129B00841099 /* CategoriesAssembly.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -88,6 +94,12 @@
 		85A2030E2BF2A4F800841099 /* Pages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pages.swift; sourceTree = "<group>"; };
 		85A203102BF2BC2200841099 /* OnboardingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewController.swift; sourceTree = "<group>"; };
 		85A203122BF2BCD300841099 /* PageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageViewController.swift; sourceTree = "<group>"; };
+		85A203362BF40BC600841099 /* AlertPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertPresenter.swift; sourceTree = "<group>"; };
+		85A203382BF40CC200841099 /* Observable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Observable.swift; sourceTree = "<group>"; };
+		85A2033A2BF40D1D00841099 /* CategoriesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoriesViewModel.swift; sourceTree = "<group>"; };
+		85A2033C2BF510EA00841099 /* NewCategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewCategoryViewController.swift; sourceTree = "<group>"; };
+		85A2033E2BF511A600841099 /* CategoriesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoriesViewController.swift; sourceTree = "<group>"; };
+		85A203402BF5129B00841099 /* CategoriesAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoriesAssembly.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -153,6 +165,7 @@
 				850C38B12BD6CC5800DC9541 /* TrackerCategory.swift */,
 				850C38B32BD6CCA000DC9541 /* WeekDays.swift */,
 				850C38B52BD6CD9000DC9541 /* TrackerType.swift */,
+				85A2033A2BF40D1D00841099 /* CategoriesViewModel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -175,6 +188,9 @@
 				850C38C72BD6DA6900DC9541 /* Constants.swift */,
 				850C38BC2BD6CF2800DC9541 /* Resources.swift */,
 				85A202982BE4271D00841099 /* GeometricParams.swift */,
+				85A203362BF40BC600841099 /* AlertPresenter.swift */,
+				85A203382BF40CC200841099 /* Observable.swift */,
+				85A203402BF5129B00841099 /* CategoriesAssembly.swift */,
 			);
 			path = "Helpers+Extencion";
 			sourceTree = "<group>";
@@ -187,6 +203,8 @@
 				850C38D82BD81E4600DC9541 /* NewTrackerViewController.swift */,
 				850C38DA2BD8205C00DC9541 /* CreateTrackerViewCntroller.swift */,
 				850C38DC2BD8249200DC9541 /* ScheduleViewController.swift */,
+				85A2033C2BF510EA00841099 /* NewCategoryViewController.swift */,
+				85A2033E2BF511A600841099 /* CategoriesViewController.swift */,
 			);
 			path = ViewContollers;
 			sourceTree = "<group>";
@@ -305,8 +323,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				85A203392BF40CC200841099 /* Observable.swift in Sources */,
 				850C38D72BD6EDCA00DC9541 /* TrackerCollectionViewCell.swift in Sources */,
 				850C389F2BD6C43700DC9541 /* TrackerApp.xcdatamodeld in Sources */,
+				85A203372BF40BC600841099 /* AlertPresenter.swift in Sources */,
 				85A202912BE4260100841099 /* EmojiAndColorsCollectionCell.swift in Sources */,
 				850C38B42BD6CCA000DC9541 /* WeekDays.swift in Sources */,
 				855875412BD8371E00E88DF3 /* HeaderCollectionView.swift in Sources */,
@@ -320,13 +340,17 @@
 				85A202952BE426D200841099 /* EmojiAndColorsCollection.swift in Sources */,
 				85A202882BE4248300841099 /* TrackerCategoryStore.swift in Sources */,
 				850C38DB2BD8205C00DC9541 /* CreateTrackerViewCntroller.swift in Sources */,
+				85A203412BF5129B00841099 /* CategoriesAssembly.swift in Sources */,
+				85A2033D2BF510EA00841099 /* NewCategoryViewController.swift in Sources */,
 				85A203132BF2BCD300841099 /* PageViewController.swift in Sources */,
 				85A2030F2BF2A4F800841099 /* Pages.swift in Sources */,
 				85A202992BE4271D00841099 /* GeometricParams.swift in Sources */,
 				850C38C82BD6DA6900DC9541 /* Constants.swift in Sources */,
 				850C38DD2BD8249200DC9541 /* ScheduleViewController.swift in Sources */,
+				85A2033B2BF40D1D00841099 /* CategoriesViewModel.swift in Sources */,
 				850C38B92BD6CE8F00DC9541 /* TabBarController.swift in Sources */,
 				850C38C42BD6D98600DC9541 /* Date+Extencion.swift in Sources */,
+				85A2033F2BF511A600841099 /* CategoriesViewController.swift in Sources */,
 				850C38952BD6C43700DC9541 /* AppDelegate.swift in Sources */,
 				85A202842BE4245500841099 /* TrackerStore.swift in Sources */,
 				850C38CD2BD6DFAB00DC9541 /* TrackersViewController.swift in Sources */,
