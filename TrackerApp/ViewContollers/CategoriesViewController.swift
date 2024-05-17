@@ -95,7 +95,7 @@ final class CategoriesViewController: UIViewController {
         }
         
         viewModel.$categories.bind { [weak self] _ in
-            guard let self = self else { return }
+            guard let self else { return }
             if self.viewModel.categories?.count != 0 {
                 self.tableView.isHidden = false
                 self.emptyCategoryLabel.isHidden = true
