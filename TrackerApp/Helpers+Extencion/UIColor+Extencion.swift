@@ -30,7 +30,7 @@ extension UIColor {
             lroundf(Float(b * 255))
         )
     }
-
+    
     static func color(from hex: String) -> UIColor {
         var rgbValue:UInt64 = 0
         Scanner(string: hex).scanHexInt64(&rgbValue)

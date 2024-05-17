@@ -121,6 +121,7 @@ final class NewTrackerViewController: UIViewController {
     }()
     
     // MARK: - Lifecycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .YPWhite
@@ -130,10 +131,11 @@ final class NewTrackerViewController: UIViewController {
     }
     
     // MARK: - Configure constraints / Add subviews
+    
     private func addSubviews() {
         view.addSubview(titleLabel)
         view.addSubview(scrollView)
-
+        
         scrollView.addSubview(textField)
         scrollView.addSubview(tableView)
         scrollView.addSubview(collectionView)
@@ -189,6 +191,7 @@ final class NewTrackerViewController: UIViewController {
     }
     
     // MARK: - Private func
+    
     private func setupCollection() {
         collectionView.register(
             SupplementaryView.self,
@@ -232,6 +235,7 @@ final class NewTrackerViewController: UIViewController {
     }
     
     // MARK: - Action private func
+    
     @objc private func cancelButtonTapped() {
         dismiss(animated: true) {
         }
@@ -259,6 +263,7 @@ final class NewTrackerViewController: UIViewController {
 }
 
 // MARK: - UITableViewDataSource
+
 extension NewTrackerViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch trackerType {
@@ -306,6 +311,7 @@ extension NewTrackerViewController: UITableViewDataSource {
 }
 
 // MARK: - UITextFieldDelegate
+
 extension NewTrackerViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         trackerText = textField.text ?? ""
@@ -344,12 +350,13 @@ extension NewTrackerViewController: UITextFieldDelegate {
 }
 
 // MARK: - UITableViewDelegate
+
 extension NewTrackerViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch indexPath.row {
         case 0:
             guard let categoriesVC = CategoriesAssembly().assemle(
-                    with: CategoryConfiguration(lastCategory: lastCategory)
+                with: CategoryConfiguration(lastCategory: lastCategory)
             ) as? CategoriesViewController
             else { return }
             categoriesVC.delegate = self
@@ -366,6 +373,7 @@ extension NewTrackerViewController: UITableViewDelegate {
 }
 
 // MARK: - ScheduleViewControllerDelegate
+
 extension NewTrackerViewController: ScheduleViewControllerDelegate {
     func addNewSchedule(_ newSchedule: [WeekDays]) {
         schedule = newSchedule
@@ -377,6 +385,7 @@ extension NewTrackerViewController: ScheduleViewControllerDelegate {
 }
 
 // MARK: - EmojiAndColorsCollectionDelegate
+
 extension NewTrackerViewController: EmojiAndColorsCollectionDelegate {
     func addNewEmoji(_ emoji: String) {
         self.emoji = emoji
@@ -392,6 +401,7 @@ extension NewTrackerViewController: EmojiAndColorsCollectionDelegate {
 }
 
 // MARK: - CategoriesViewControllerDelegate
+
 extension NewTrackerViewController: CategoriesViewControllerDelegate {
     func didSelectCategory(with name: String?) {
         lastCategory = name ?? ""

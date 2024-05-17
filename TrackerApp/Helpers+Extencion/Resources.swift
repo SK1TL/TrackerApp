@@ -10,6 +10,7 @@ import UIKit
 enum Resources {
     
     // MARK: - UI element's SF symbols
+    
     enum SfSymbols {
         static let largeConfig = UIImage.SymbolConfiguration(pointSize: 20, weight: .medium, scale: .large)
         static let addTracker = UIImage(systemName: "plus", withConfiguration: largeConfig)
@@ -22,6 +23,7 @@ enum Resources {
     }
     
     // MARK: - UI element's images
+    
     enum Images {
         static let emptySearch = UIImage(named: "searchEmoji")
         static let emptyTrackers = UIImage(named: "dizzy")
@@ -29,6 +31,7 @@ enum Resources {
     }
     
     // MARK: - Fonts
+    
     enum Fonts {
         static func ypBold34() -> UIFont? {
             UIFont.systemFont(ofSize: 34, weight: .bold)
@@ -59,6 +62,7 @@ enum Resources {
         }
     }
     // MARK: - Colors
+    
     static let colors: [UIColor] = [
         .ypColorSelection01, .ypColorSelection02, .ypColorSelection03, .ypColorSelection04, .ypColorSelection05,
         .ypColorSelection06, .ypColorSelection07, .ypColorSelection08, .ypColorSelection09, .ypColorSelection10,

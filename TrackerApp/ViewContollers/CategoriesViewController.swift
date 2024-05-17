@@ -95,7 +95,7 @@ final class CategoriesViewController: UIViewController {
         }
         
         viewModel.$categories.bind { [weak self] _ in
-            guard let self else { return }
+            guard let self = self else { return }
             if self.viewModel.categories?.count != 0 {
                 self.tableView.isHidden = false
                 self.emptyCategoryLabel.isHidden = true
@@ -118,9 +118,9 @@ final class CategoriesViewController: UIViewController {
         }
         
         if let categories = viewModel.categories, categories.count != 0 {
-           heightTableView = categories.count * 75 - 1
-           emptyCategoryLabel.isHidden = true
-           emptyCategoryImageView.isHidden = true
+            heightTableView = categories.count * 75 - 1
+            emptyCategoryLabel.isHidden = true
+            emptyCategoryImageView.isHidden = true
         }
         
         tableViewHeightConstraint = tableView.heightAnchor.constraint(equalToConstant: CGFloat(heightTableView))

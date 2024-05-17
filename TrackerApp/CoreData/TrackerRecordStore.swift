@@ -69,7 +69,7 @@ final class TrackerRecordStore: NSObject {
             let id = coreData.recordId,
             let date = coreData.recordDate
         else { throw StoreError.decodingErrorInvalidTrackerRecord }
-
+        
         return TrackerRecord(id: id, date: date)
     }
 }

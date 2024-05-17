@@ -56,6 +56,7 @@ final class ScheduleViewController: UIViewController, UITableViewDelegate {
     }()
     
     // MARK: - Lifecycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .YPWhite
@@ -64,6 +65,7 @@ final class ScheduleViewController: UIViewController, UITableViewDelegate {
     }
     
     // MARK: - Configure constraints / Add subviews
+    
     private func addSubviews() {
         view.addSubview(titleLabel)
         view.addSubview(tableView)
@@ -88,6 +90,7 @@ final class ScheduleViewController: UIViewController, UITableViewDelegate {
     }
     
     // MARK: - Action private func
+    
     @objc private func completedButtonTapped() {
         self.delegate?.addNewSchedule(self.switchDays)
         dismiss(animated: true)
@@ -106,6 +109,7 @@ final class ScheduleViewController: UIViewController, UITableViewDelegate {
 }
 
 // MARK: - UITableViewDataSource
+
 extension ScheduleViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         WeekDays.allCases.count
@@ -131,6 +135,7 @@ extension ScheduleViewController: UITableViewDataSource {
     }
     
     // MARK: - Private func
+    
     private func buttonIsEnabled(_ isOn: Bool) {
         completedButton.isEnabled = isOn
         completedButton.backgroundColor = isOn ? .YPBlack : .YPGray        

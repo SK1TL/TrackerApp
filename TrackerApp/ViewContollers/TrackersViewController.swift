@@ -73,6 +73,7 @@ final class TrackersViewController: UIViewController {
     }()
     
     // MARK: - Lifecycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .YPWhite
@@ -85,6 +86,7 @@ final class TrackersViewController: UIViewController {
     }
     
     // MARK: - Configure constraints / Add subviews
+    
     private func addSubviews() {
         view.addSubview(emptyView)
         view.addSubview(trackerCollectionView)
@@ -158,6 +160,7 @@ final class TrackersViewController: UIViewController {
     }
     
     // MARK: - Action private funс
+    
     @objc private func addTracker() {
         let typeNewTrackerVC = CreateTrackerViewCntroller(categories: categories)
         typeNewTrackerVC.delegate = self
@@ -172,6 +175,7 @@ final class TrackersViewController: UIViewController {
 }
 
 // MARK: - UISearchResultsUpdating
+
 extension TrackersViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         textOfSearchQuery = searchController.searchBar.text ?? ""
@@ -180,6 +184,7 @@ extension TrackersViewController: UISearchResultsUpdating {
 }
 
 // MARK: - UICollectionViewDataSource
+
 extension TrackersViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         visibleCategories[section].trackers.count
@@ -231,6 +236,7 @@ extension TrackersViewController: UICollectionViewDataSource {
 }
 
 // MARK: - UICollectionViewDelegateFlowLayout
+
 extension TrackersViewController: UICollectionViewDelegateFlowLayout {
     private var lineSpacing: CGFloat { 16 }
     private var interitemSpacing: CGFloat { 9 }
@@ -293,6 +299,7 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
 }
 
 // MARK: - TrackerCollectionViewCellDelegate
+
 extension TrackersViewController: TrackerCollectionViewCellDelegate {
     func didTapedDoneButton(cell: TrackerCollectionViewCell) {
         guard let indexPath = trackerCollectionView.indexPath(for: cell) else {
