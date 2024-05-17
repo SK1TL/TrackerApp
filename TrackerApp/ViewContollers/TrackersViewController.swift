@@ -225,6 +225,7 @@ extension TrackersViewController: UICollectionViewDataSource {
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         trackerCollectionView.isHidden = visibleCategories.count == .zero
+        print("visibleCategories.count:", visibleCategories.count)
         return visibleCategories.count
     }
 }

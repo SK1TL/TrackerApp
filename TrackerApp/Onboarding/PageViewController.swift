@@ -83,9 +83,8 @@ extension PageViewController: UIPageViewControllerDataSource {
         }
         
         index -= 1
-        let vc = OnboardingViewController(with: pages[index])
         
-        return vc
+        return OnboardingViewController(with: pages[index])
     }
     
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
@@ -96,9 +95,8 @@ extension PageViewController: UIPageViewControllerDataSource {
         }
         
         index += 1
-        let vc = OnboardingViewController(with: pages[index])
         
-        return vc
+        return OnboardingViewController(with: pages[index])
     }
 }
 

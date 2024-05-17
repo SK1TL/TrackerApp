@@ -133,7 +133,7 @@ final class NewTrackerViewController: UIViewController {
     private func addSubviews() {
         view.addSubview(titleLabel)
         view.addSubview(scrollView)
-        
+
         scrollView.addSubview(textField)
         scrollView.addSubview(tableView)
         scrollView.addSubview(collectionView)
@@ -238,10 +238,12 @@ final class NewTrackerViewController: UIViewController {
     }
     
     @objc private func createButtonTapped() {
+        guard let currentCategory else { return }
+        
         dismiss(animated: true)
         delegate?.addNewTrackerCategory(
             TrackerCategory(
-                title: "Новая категория",
+                title: currentCategory,
                 trackers: [
                     Tracker(
                         id: UUID(),
@@ -393,6 +395,7 @@ extension NewTrackerViewController: EmojiAndColorsCollectionDelegate {
 extension NewTrackerViewController: CategoriesViewControllerDelegate {
     func didSelectCategory(with name: String?) {
         lastCategory = name ?? ""
+        currentCategory = name
         chosenCategory = true
         buttonIsEnabled()
         tableView.reloadData()

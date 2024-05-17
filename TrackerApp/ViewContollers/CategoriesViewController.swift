@@ -89,7 +89,7 @@ final class CategoriesViewController: UIViewController {
         makeConstraints()
         
         viewModel.$selectedCategoryName.bind { [weak self] _ in
-            guard let self = self else { return }
+            guard let self else { return }
             self.delegate?.didSelectCategory(with: self.viewModel.selectedCategoryName)
             self.tableView.reloadData()
         }
@@ -183,14 +183,21 @@ final class CategoriesViewController: UIViewController {
 
 extension CategoriesViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let cell = tableView.cellForRow(at: indexPath),
-              let categoryName = cell.textLabel?.text else { return }
+        guard
+            let cell = tableView.cellForRow(at: indexPath),
+            let categoryName = cell.textLabel?.text
+        else { return }
+        
         viewModel.selectCategory(with: categoryName)
         
         dismiss(animated: true)
     }
     
-    func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+    func tableView(
+        _ tableView: UITableView,
+        contextMenuConfigurationForRowAt indexPath: IndexPath,
+        point: CGPoint
+    ) -> UIContextMenuConfiguration? {
         guard let category = viewModel.categories?[indexPath.row] else { return nil }
         
         return UIContextMenuConfiguration(actionProvider:  { _ in
@@ -210,8 +217,7 @@ extension CategoriesViewController: UITableViewDelegate {
 
 extension CategoriesViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        
-        return viewModel.categories?.count ?? 0
+        viewModel.categories?.count ?? 0
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
@@ -223,12 +229,11 @@ extension CategoriesViewController: UITableViewDataSource {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "cell") else { return UITableViewCell() }
         cell.textLabel?.text = viewModel.categories?[indexPath.row].title
         cell.accessoryType = cell.textLabel?.text == viewModel.selectedCategoryName ? .checkmark : .none
-        
         return cell
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 75
+        75
     }
 }
 

@@ -90,16 +90,14 @@ final class NewCategoryViewController: UIViewController {
     // MARK: - Action private funс
     
     @objc private func doneButtonTapped() {
-        if textField.hasText {
-            if let category = textField.text {
-                if editingCategory == nil {
-                    delegate?.create(newCategory: category)
-                } else if let editingCategory = editingCategory {
-                    delegate?.update(editingCategory: editingCategory.title, with: category)
-                    self.editingCategory = nil
-                }
-                dismiss(animated: true)
+        if textField.hasText, let category = textField.text {
+            if editingCategory == nil {
+                delegate?.create(newCategory: category)
+            } else if let editingCategory = editingCategory {
+                delegate?.update(editingCategory: editingCategory.title, with: category)
+                self.editingCategory = nil
             }
+            dismiss(animated: true)
         }
     }
 }
