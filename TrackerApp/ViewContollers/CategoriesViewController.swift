@@ -29,7 +29,7 @@ final class CategoriesViewController: UIViewController {
     
     private lazy var emptyCategoryImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(named: "star")
+        imageView.image = UIImage(named: "dizzy")
         return imageView
     }()
     

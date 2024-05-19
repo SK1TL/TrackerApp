@@ -18,7 +18,7 @@ final class NewTrackerViewController: UIViewController {
     
     private var emojiAndColorsCollection = EmojiAndColorsCollection()
     private var heightTableView: CGFloat = 74
-    private var currentCategory: String? = "Новая категория"
+    private var currentCategory: String?
     private var schedule: [WeekDays] = []
     private var switchDays: [WeekDays] = []
     private var trackerText = ""
