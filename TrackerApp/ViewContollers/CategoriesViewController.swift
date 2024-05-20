@@ -16,9 +16,9 @@ final class CategoriesViewController: UIViewController {
     weak var delegate: CategoriesViewControllerDelegate?
     private let viewModel: CategoriesViewModel
     
-    private var heightTableView: Int = -1
+    private var heightTableView: Int = 0
     private var tableViewHeightConstraint: NSLayoutConstraint?
-    
+
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.font = Resources.Fonts.ypMedium16()
@@ -86,8 +86,7 @@ final class CategoriesViewController: UIViewController {
         
         view.backgroundColor = .YPWhite
         addSubviews()
-        makeConstraints()
-        
+
         viewModel.$selectedCategoryName.bind { [weak self] _ in
             guard let self else { return }
             self.delegate?.didSelectCategory(with: self.viewModel.selectedCategoryName)
@@ -99,6 +98,7 @@ final class CategoriesViewController: UIViewController {
             if self.viewModel.categories?.count != 0 {
                 self.tableView.isHidden = false
                 self.emptyCategoryLabel.isHidden = true
+                self.tableViewHeightConstraint?.constant = CGFloat(viewModel.categories!.count * 75)
                 self.emptyCategoryImageView.isHidden = true
             } else {
                 self.tableView.isHidden = true
@@ -108,7 +108,7 @@ final class CategoriesViewController: UIViewController {
             
             self.tableView.reloadData()
             DispatchQueue.main.async {
-                self.tableViewHeightConstraint?.constant = self.tableView.contentSize.height - 1
+                self.view.layoutIfNeeded()
             }
         }
         
@@ -118,14 +118,11 @@ final class CategoriesViewController: UIViewController {
         }
         
         if let categories = viewModel.categories, categories.count != 0 {
-            heightTableView = categories.count * 75 - 1
+            heightTableView = categories.count * 75
             emptyCategoryLabel.isHidden = true
             emptyCategoryImageView.isHidden = true
         }
-        
-        tableViewHeightConstraint = tableView.heightAnchor.constraint(equalToConstant: CGFloat(heightTableView))
-        tableViewHeightConstraint?.priority = .defaultLow
-        tableViewHeightConstraint?.isActive = true
+        makeConstraints()
     }
     
     private func addSubviews() {
@@ -137,6 +134,9 @@ final class CategoriesViewController: UIViewController {
     }
     
     private func makeConstraints() {
+        
+        tableViewHeightConstraint = tableView.heightAnchor.constraint(equalToConstant: CGFloat(heightTableView))
+
         NSLayoutConstraint.activate([
             titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             titleLabel.bottomAnchor.constraint(equalTo: view.topAnchor, constant: 40),
@@ -154,8 +154,8 @@ final class CategoriesViewController: UIViewController {
             tableView.topAnchor.constraint(equalTo: view.topAnchor, constant: 73),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            tableView.bottomAnchor.constraint(lessThanOrEqualTo: addCategoryButton.topAnchor, constant: -16),
-            
+            tableViewHeightConstraint!,
+
             addCategoryButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50),
             addCategoryButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             addCategoryButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
