@@ -18,7 +18,7 @@ final class CategoriesViewController: UIViewController {
     
     private var heightTableView: Int = 0
     private var tableViewHeightConstraint: NSLayoutConstraint?
-
+    
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.font = Resources.Fonts.ypMedium16()
@@ -86,7 +86,7 @@ final class CategoriesViewController: UIViewController {
         
         view.backgroundColor = .YPWhite
         addSubviews()
-
+        
         viewModel.$selectedCategoryName.bind { [weak self] _ in
             guard let self else { return }
             self.delegate?.didSelectCategory(with: self.viewModel.selectedCategoryName)
@@ -136,7 +136,7 @@ final class CategoriesViewController: UIViewController {
     private func makeConstraints() {
         
         tableViewHeightConstraint = tableView.heightAnchor.constraint(equalToConstant: CGFloat(heightTableView))
-
+        
         NSLayoutConstraint.activate([
             titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             titleLabel.bottomAnchor.constraint(equalTo: view.topAnchor, constant: 40),
@@ -155,7 +155,7 @@ final class CategoriesViewController: UIViewController {
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             tableViewHeightConstraint!,
-
+            
             addCategoryButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50),
             addCategoryButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             addCategoryButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
