@@ -35,6 +35,7 @@ final class EmojiAndColorsCollection: NSObject {
 }
 
 // MARK: - UICollectionViewDataSource
+
 extension EmojiAndColorsCollection: UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         2
@@ -95,6 +96,7 @@ extension EmojiAndColorsCollection: UICollectionViewDataSource {
 }
 
 // MARK: - UICollectionViewDelegateFlowLayout
+
 extension EmojiAndColorsCollection: UICollectionViewDelegateFlowLayout {
     func collectionView(
         _ collectionView: UICollectionView,
@@ -155,6 +157,7 @@ extension EmojiAndColorsCollection: UICollectionViewDelegateFlowLayout {
 }
 
 // MARK: - UICollectionViewDelegate
+
 extension EmojiAndColorsCollection: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if let cell = collectionView.cellForItem(at: indexPath) as? EmojiAndColorsCollectionCell {

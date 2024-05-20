@@ -17,9 +17,17 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         options connectionOptions: UIScene.ConnectionOptions
     ) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
-        window = UIWindow(windowScene: windowScene)
-        window?.rootViewController = TabBarController()
-        window?.makeKeyAndVisible()
+        let window = UIWindow(windowScene: windowScene)
+        
+        if !UserDefaults.standard.bool(forKey: "hasShownOnboarding") {
+            UserDefaults.standard.set(true, forKey: "hasShownOnboarding")
+            let onboardingViewController = PageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
+            window.rootViewController = onboardingViewController
+        } else {
+            window.rootViewController = TabBarController()
+        }
+        window.makeKeyAndVisible()
+        self.window = window
     }
     
     func sceneDidDisconnect(_ scene: UIScene) {}
