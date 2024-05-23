@@ -40,8 +40,8 @@ final class TrackersViewController: UIViewController {
         searchController.searchResultsUpdater = self
         searchController.hidesNavigationBarDuringPresentation = false
         let searchBar = searchController.searchBar
-        searchBar.setValue("Отменить", forKey: "cancelButtonText")
-        searchBar.placeholder = "Поиск"
+        searchBar.setValue(NSLocalizedString("cancel", comment: ""), forKey: "cancelButtonText")
+        searchBar.placeholder = NSLocalizedString("search", comment: "")
         searchBar.translatesAutoresizingMaskIntoConstraints = false
         return searchController
     }()
@@ -49,7 +49,10 @@ final class TrackersViewController: UIViewController {
     private lazy var emptyView: EmptyView = {
         let emptyView = EmptyView()
         emptyView.translatesAutoresizingMaskIntoConstraints = false
-        emptyView.configureView(image: Resources.Images.emptyTrackers!, text: "Что будем отслеживать?")
+        emptyView.configureView(
+            image: Resources.Images.emptyTrackers!,
+            text: NSLocalizedString("emptyTrackers.text", comment: "")
+        )
         return emptyView
     }()
     
@@ -107,7 +110,7 @@ final class TrackersViewController: UIViewController {
     // MARK: - Private func
     
     private func setupBar() {
-        navigationItem.title = "Трекеры"
+        navigationItem.title = NSLocalizedString("trackers", comment: "")
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.leftBarButtonItem = UIBarButtonItem(
             image: UIImage(systemName: "plus"),
@@ -124,7 +127,10 @@ final class TrackersViewController: UIViewController {
         if categories.isEmpty {
             trackerCollectionView.isHidden = true
             emptyView.isHidden = false
-            emptyView.configureView(image: Resources.Images.emptyTrackers!, text: "Что будем отслеживать?")
+            emptyView.configureView(
+                image: Resources.Images.emptyTrackers!,
+                text: NSLocalizedString("emptyTrackers.text", comment: "")
+            )
         } else {
             trackerCollectionView.isHidden = false
             emptyView.isHidden = true
@@ -139,7 +145,10 @@ final class TrackersViewController: UIViewController {
         if categoriesFiltered.isEmpty {
             if !textOfSearchQuery.isEmpty {
                 emptyView.isHidden = false
-                emptyView.configureView(image: Resources.Images.emptySearch!, text: "Ничего не найдено")
+                emptyView.configureView(
+                    image: Resources.Images.emptySearch!,
+                    text: NSLocalizedString("emptyPlaceholder.search", comment: "")
+                )
             }
         }
         visibleCategories = categoriesFiltered

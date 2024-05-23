@@ -24,7 +24,7 @@ final class TabBarController: UITabBarController {
         let trackerViewController = UINavigationController(rootViewController: TrackersViewController())
         
         trackerViewController.tabBarItem = UITabBarItem(
-            title: "Трекеры",
+            title: NSLocalizedString("trackers", comment: ""),
             image: Resources.SfSymbols.tracker?.withTintColor(.YPGray),
             selectedImage: Resources.SfSymbols.tracker?.withTintColor(.YPBlue)
         )
@@ -32,7 +32,7 @@ final class TabBarController: UITabBarController {
         let statisticViewController = UINavigationController(rootViewController: StatisticViewController())
         
         statisticViewController.tabBarItem = UITabBarItem(
-            title: "Статистика",
+            title: NSLocalizedString("statistics", comment: ""),
             image: Resources.SfSymbols.statistic?.withTintColor(.YPGray),
             selectedImage: Resources.SfSymbols.statistic?.withTintColor(.YPBlue)
         )

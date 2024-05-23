@@ -52,7 +52,7 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         label.textAlignment = .natural
         label.textColor = .YPBlack
         label.font = Resources.Fonts.ypMedium12()
-        label.text = "0 Дней"
+        label.text = "0 дней"
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -67,6 +67,26 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
+    
+    private let pinImage: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(systemName: "pin.fill")
+        imageView.tintColor = .white
+        imageView.isHidden = true
+        return imageView
+    }()
+    
+    private var days = 0 {
+        didSet {
+            let numberFormatter = NumberFormatter()
+            numberFormatter.numberStyle = .currency
+            numberFormatter.locale = Locale.current
+            counterLabel.text = String.localizedStringWithFormat(
+                NSLocalizedString("numberOfDays", comment: "Number of checked days"),
+                days
+            )
+        }
+    }
     
     override init(frame: CGRect) {
         super.init(frame: frame)

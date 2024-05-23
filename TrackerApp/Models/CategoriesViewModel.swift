@@ -32,12 +32,12 @@ final class CategoriesViewModel {
     func showAlertToDelete(_ category: TrackerCategory) {
         let alertModel = AlertModel(
             title: nil,
-            message: "Эта категория точно не нужна?",
-            buttonText: "Удалить",
+            message: NSLocalizedString("alertCategory.text", comment: ""),
+            buttonText: NSLocalizedString("delete", comment: ""),
             completion: { [weak self] _ in
                 self?.deleteCategory(category: category)
             },
-            cancelText: "Отменить",
+            cancelText: NSLocalizedString("cancel", comment: ""),
             cancelCompletion: nil
         )
         

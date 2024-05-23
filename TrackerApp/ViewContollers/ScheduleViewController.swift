@@ -20,7 +20,7 @@ final class ScheduleViewController: UIViewController, UITableViewDelegate {
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.font = Resources.Fonts.ypMedium16()
-        label.text = "Расписание"
+        label.text = NSLocalizedString("schedule", comment: "")
         label.textColor = .YPBlack
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -43,7 +43,7 @@ final class ScheduleViewController: UIViewController, UITableViewDelegate {
     
     private lazy var completedButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Готово", for: .normal)
+        button.setTitle(NSLocalizedString("ready", comment: ""), for: .normal)
         button.setTitleColor(.YPWhite, for: .normal)
         button.titleLabel?.font = Resources.Fonts.ypMedium16()
         button.backgroundColor = .YPGray
@@ -138,7 +138,7 @@ extension ScheduleViewController: UITableViewDataSource {
     
     private func buttonIsEnabled(_ isOn: Bool) {
         completedButton.isEnabled = isOn
-        completedButton.backgroundColor = isOn ? .YPBlack : .YPGray        
+        completedButton.backgroundColor = isOn ? .YPBlack : .YPGray
         completedButton.setTitleColor(.YPWhite, for: .normal)
     }
 }

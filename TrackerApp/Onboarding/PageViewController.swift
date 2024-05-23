@@ -22,7 +22,7 @@ final class PageViewController: UIPageViewController {
     
     private lazy var onboardingButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Вот это технологии!", for: .normal)
+        button.setTitle(NSLocalizedString("onboardingPageViewController.Button", comment: ""), for: .normal)
         button.titleLabel?.textColor = .white
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
         button.tintColor = .white
@@ -75,7 +75,10 @@ final class PageViewController: UIPageViewController {
 // MARK: - UIPageViewControllerDataSource
 
 extension PageViewController: UIPageViewControllerDataSource {
-    func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
+    func pageViewController(
+        _ pageViewController: UIPageViewController,
+        viewControllerBefore viewController: UIViewController
+    ) -> UIViewController? {
         guard let currentVC = viewController as? OnboardingViewController  else { return nil }
         var index = currentVC.page.index
         if index == 0 {
@@ -87,7 +90,10 @@ extension PageViewController: UIPageViewControllerDataSource {
         return OnboardingViewController(with: pages[index])
     }
     
-    func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
+    func pageViewController(
+        _ pageViewController: UIPageViewController,
+        viewControllerAfter viewController: UIViewController
+    ) -> UIViewController? {
         guard let currentVC = viewController as? OnboardingViewController  else { return nil }
         var index = currentVC.page.index
         if index >= self.pages.count - 1 {

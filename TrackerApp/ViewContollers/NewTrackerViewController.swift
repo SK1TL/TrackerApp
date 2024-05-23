@@ -46,10 +46,10 @@ final class NewTrackerViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         switch trackerType {
         case .habitTracker: 
-            label.text = "Новая привычка"
-        case .eventTracker: 
-            label.text = "Новое нерегулярное событие"
-        case .none: 
+            label.text = NSLocalizedString("newHabit", comment: "")
+        case .eventTracker:
+            label.text = NSLocalizedString("newEvent", comment: "")
+        case .none:
             break
         }
         return label
@@ -57,7 +57,7 @@ final class NewTrackerViewController: UIViewController {
     
     private lazy var textField: UITextField = {
         let textfield = UITextField()
-        textfield.placeholder = "Введите название трекера"
+        textfield.placeholder = NSLocalizedString("enterCategoryName", comment: "")
         let leftInsertView = UIView(frame: CGRect(x: 0, y: 0, width: 17, height: 30))
         textfield.leftView = leftInsertView
         textfield.leftViewMode = .always
@@ -86,7 +86,7 @@ final class NewTrackerViewController: UIViewController {
     
     private lazy var cancelButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Отменить", for: .normal)
+        button.setTitle(NSLocalizedString("cancel", comment: ""), for: .normal)
         button.setTitleColor(.YPRed, for: .normal)
         button.titleLabel?.font = Resources.Fonts.ypMedium16()
         button.backgroundColor = .YPWhite
@@ -101,7 +101,7 @@ final class NewTrackerViewController: UIViewController {
     
     private lazy var saveButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Создать", for: .normal)
+        button.setTitle(NSLocalizedString("create", comment: ""), for: .normal)
         button.setTitleColor(.YPWhite, for: .normal)
         button.titleLabel?.font = Resources.Fonts.ypMedium16()
         button.backgroundColor = .YPGray
@@ -286,10 +286,10 @@ extension NewTrackerViewController: UITableViewDataSource {
         
         switch indexPath.row {
         case 0:
-            cell.textLabel?.text = "Категория"
+            cell.textLabel?.text = NSLocalizedString("category", comment: "")
             cell.detailTextLabel?.text = currentCategory
         case 1:
-            cell.textLabel?.text = "Расписание"
+            cell.textLabel?.text = NSLocalizedString("schedule", comment: "")
             cell.detailTextLabel?.text = scheduleToString(for: schedule)
         default:
             break
@@ -302,7 +302,7 @@ extension NewTrackerViewController: UITableViewDataSource {
     }
     
     private func scheduleToString(for: [WeekDays]) -> String {
-        guard schedule.count != WeekDays.allCases.count else { return "Каждый день" }
+        guard schedule.count != WeekDays.allCases.count else { return NSLocalizedString("everyDay", comment: "") }
         
         let scheduleSorted = schedule.sorted()
         let scheduleShortName = scheduleSorted.map { $0.shortName }.joined(separator: ", ")
@@ -319,7 +319,11 @@ extension NewTrackerViewController: UITextFieldDelegate {
         return true
     }
     
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+    func textField(
+        _ textField: UITextField,
+        shouldChangeCharactersIn range: NSRange,
+        replacementString string: String
+    ) -> Bool {
         if range.location == 0 && string == " " {
             return false
         }
