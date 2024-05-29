@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum WeekDays: String, CaseIterable, Comparable {
+enum WeekDays: String, CaseIterable {
     
     case monday = "monday"
     case tuesday = "tuesday"
@@ -95,10 +95,6 @@ enum WeekDays: String, CaseIterable, Comparable {
     
     var localizedName: String {
         NSLocalizedString(rawValue, comment: "")
-    }
-    
-    static func < (lhs: WeekDays, rhs: WeekDays) -> Bool {
-        return lhs.sortOrder < rhs.sortOrder
     }
 }
 

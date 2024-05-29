@@ -254,7 +254,9 @@ final class NewTrackerViewController: UIViewController {
                         text: textField.text ?? "",
                         emoji: emoji,
                         color: color,
-                        schedule: schedule
+                        schedule: schedule,
+                        completedDaysCount: 0,
+                        isPinned: false,
                     )
                 ]
             )

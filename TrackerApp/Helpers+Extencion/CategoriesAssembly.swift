@@ -14,11 +14,11 @@ struct CategoryConfiguration {
 final class CategoriesAssembly {
     func assemle(with configuration: CategoryConfiguration) -> UIViewController {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return UIViewController() }
-        let categoryStore = TrackerCategoryStore(
+        let categoryStore = try! TrackerCategoryStore(
             context: appDelegate.persistentContainer.viewContext
         )
         let lastCategory = configuration.lastCategory
-        let viewModel = CategoriesViewModel(categoryStore: categoryStore, lastCategory: lastCategory)
+        let viewModel = CategoriesViewModel(trackerCategoryStore: categoryStore, lastCategory: lastCategory)
         let viewController = CategoriesViewController(viewModel: viewModel)
         return viewController
     }
