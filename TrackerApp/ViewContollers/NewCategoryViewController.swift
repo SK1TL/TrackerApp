@@ -21,13 +21,13 @@ final class NewCategoryViewController: UIViewController {
         let label = UILabel()
         label.font = Resources.Fonts.ypMedium16()
         label.textColor = .YPBlack
-        label.text = "Новая категория"
+        label.text = NSLocalizedString("newCategory", comment: "")
         return label
     }()
     
     private lazy var textField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "Введите название категории"
+        textField.placeholder = NSLocalizedString("enterCategoryName", comment: "")
         let leftInsetView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: 30))
         textField.leftView = leftInsetView
         textField.leftViewMode = .always
@@ -40,7 +40,7 @@ final class NewCategoryViewController: UIViewController {
     
     private lazy var doneButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Готово", for: .normal)
+        button.setTitle(NSLocalizedString("ready", comment: ""), for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.titleLabel?.font = Resources.Fonts.ypMedium16()
         button.backgroundColor = .YPGray

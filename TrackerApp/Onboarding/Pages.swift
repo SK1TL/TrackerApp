@@ -14,9 +14,9 @@ enum Pages: CaseIterable {
     var title: String {
         switch self {
         case .pageOne:
-            return "Отслеживайте только то, что хотите"
+            return NSLocalizedString("backgroundImage.blue.text", comment: "")
         case .pageTwo:
-            return "Даже если это не литры воды и йога"
+            return NSLocalizedString("backgroundImage.red.text", comment: "")
         }
     }
     

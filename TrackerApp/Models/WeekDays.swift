@@ -57,19 +57,19 @@ enum WeekDays: String, Comparable, CaseIterable {
     var shortName: String {
         switch self {
         case .monday:
-            return "Пн"
+            return NSLocalizedString("mo", comment: "")
         case .tuesday:
-            return "Вт"
+            return NSLocalizedString("tu", comment: "")
         case .wednesday:
-            return "Ср"
+            return NSLocalizedString("we", comment: "")
         case .thursday:
-            return "Чт"
+            return NSLocalizedString("th", comment: "")
         case .friday:
-            return "Пт"
+            return NSLocalizedString("fr", comment: "")
         case .saturday:
-            return "Сб"
+            return NSLocalizedString("sa", comment: "")
         case .sunday:
-            return "Вс"
+            return NSLocalizedString("mu", comment: "")
         }
     }
     
@@ -94,5 +94,9 @@ enum WeekDays: String, Comparable, CaseIterable {
     
     static func < (lhs: WeekDays, rhs: WeekDays) -> Bool {
         return lhs.sortOrder < rhs.sortOrder
+    }
+    
+    var localizedName: String {
+        NSLocalizedString(rawValue, comment: "")
     }
 }

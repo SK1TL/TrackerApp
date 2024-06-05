@@ -23,7 +23,7 @@ final class CategoriesViewController: UIViewController {
         let label = UILabel()
         label.font = Resources.Fonts.ypMedium16()
         label.textColor = .YPBlack
-        label.text = "Категория"
+        label.text = NSLocalizedString("category", comment: "")
         return label
     }()
     
@@ -36,7 +36,7 @@ final class CategoriesViewController: UIViewController {
     private lazy var emptyCategoryLabel: UILabel = {
         let label = UILabel()
         label.font = Resources.Fonts.ypMedium12()
-        label.text = "Привычки и события можно объединить по смыслу"
+        label.text = NSLocalizedString("emptyCategories.text", comment: "")
         label.numberOfLines = 2
         label.textColor = .YPBlack
         label.textAlignment = .center
@@ -60,7 +60,7 @@ final class CategoriesViewController: UIViewController {
     
     private lazy var addCategoryButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Добавить категорию", for: .normal)
+        button.setTitle(NSLocalizedString("addCategory", comment: ""), for: .normal)
         button.setTitleColor(.YPWhite, for: .normal)
         button.titleLabel?.font = Resources.Fonts.ypMedium16()
         button.backgroundColor = .YPBlack
@@ -202,10 +202,10 @@ extension CategoriesViewController: UITableViewDelegate {
         
         return UIContextMenuConfiguration(actionProvider:  { _ in
             UIMenu(children: [
-                UIAction(title: "Редактировать") { [weak self] _ in
+                UIAction(title: NSLocalizedString("edit", comment: "")) { [weak self] _ in
                     self?.editCategory(category)
                 },
-                UIAction(title: "Удалить", attributes: .destructive) { [weak self] _ in
+                UIAction(title: NSLocalizedString("delete", comment: ""), attributes: .destructive) { [weak self] _ in
                     self?.viewModel.showAlertToDelete(category)
                 }
             ])
