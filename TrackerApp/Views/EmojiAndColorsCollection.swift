@@ -84,9 +84,9 @@ extension EmojiAndColorsCollection: UICollectionViewDataSource {
         }
         switch indexPath.section {
         case 0:
-            view.titleLabel.text = "Emoji"
+            view.titleLabel.text = NSLocalizedString("emoji", comment: "")
         case 1:
-            view.titleLabel.text = "Цвет"
+            view.titleLabel.text = NSLocalizedString("color", comment: "")
         default:
             break
         }
