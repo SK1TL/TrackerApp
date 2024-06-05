@@ -18,6 +18,46 @@ extension UIColor {
     static var YPWhite: UIColor { UIColor(named: "ypWhite") ?? UIColor.white }
     static var YPWhiteAlpha: UIColor { UIColor(named: "ypWhiteAlpha") ?? UIColor.lightGray }
     
+    static let toggleBlackWhiteColor = UIColor { (traits: UITraitCollection) -> UIColor in
+        if traits.userInterfaceStyle == .light {
+            return UIColor.black
+        } else {
+            return UIColor.white
+        }
+    }
+    
+    static let blackWhiteColorCell = UIColor { (traits: UITraitCollection) -> UIColor in
+        if traits.userInterfaceStyle == .light {
+            return UIColor.white
+        } else {
+            return UIColor.black
+        }
+    }
+    
+    static let tabBarBorderLineColor = UIColor { (traits: UITraitCollection) -> UIColor in
+        if traits.userInterfaceStyle == .light {
+            return UIColor.YPGray
+        } else {
+            return UIColor.black
+        }
+    }
+    
+    static let blackWhiteColorButton = UIColor { (traits: UITraitCollection) -> UIColor in
+        if traits.userInterfaceStyle == .light {
+            return UIColor.YPWhite
+        } else {
+            return UIColor.black
+        }
+    }
+    
+    static let blackGrayColorButton = UIColor { (traits: UITraitCollection) -> UIColor in
+        if traits.userInterfaceStyle == .light {
+            return UIColor.white
+        } else {
+            return UIColor.black
+        }
+    }
+    
     static func hexString(from color: UIColor) -> String {
         let components = color.cgColor.components
         let r: CGFloat = components?[0] ?? 0.0

@@ -12,4 +12,6 @@ struct Identifier {
     static let idHeader = "HeaderCollectionView"
     static let idEmojiAndColorsCell = "EmojiAndColorsCollectionCell"
     static let idSupply = "Header"
+    
+    static let idStatisticCell = "StatisticCell"
 }

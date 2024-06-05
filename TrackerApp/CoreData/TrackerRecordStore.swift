@@ -8,9 +8,18 @@
 import UIKit
 import CoreData
 
+protocol TrackerRecordStoreDelegate: AnyObject {
+    func didUpdateRecords(_ records: Set<TrackerRecord>)
+}
+
 final class TrackerRecordStore: NSObject {
+    
+    static let shared = TrackerRecordStore()
+    weak var delegate: TrackerRecordStoreDelegate?
+    
     private let context: NSManagedObjectContext
     private let trackerStore = TrackerStore()
+    private var completedTrackers: Set<TrackerRecord> = []
     
     convenience override init() {
         guard let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext else {
@@ -62,6 +71,23 @@ final class TrackerRecordStore: NSObject {
         guard let recordToRemove = records.first else { return }
         context.delete(recordToRemove)
         try context.save()
+    }
+    
+    func loadCompletedTrackers() throws -> [TrackerRecord] {
+        let request = NSFetchRequest<TrackerRecordCoreData>(entityName: "TrackerRecordCoreData")
+        let recordsCoreData = try context.fetch(request)
+        let records = try recordsCoreData.map { try makeTrackerRecord(from: $0) }
+        return records
+    }
+    
+    func loadCompletedTrackers(by date: Date) throws {
+        let request = NSFetchRequest<TrackerRecordCoreData>(entityName: "TrackerRecordCoreData")
+        request.returnsObjectsAsFaults = false
+        request.predicate = NSPredicate(format: "%K == %@", #keyPath(TrackerRecordCoreData.recordDate), date as NSDate)
+        let recordsCoreData = try context.fetch(request)
+        let records = try recordsCoreData.map { try makeTrackerRecord(from: $0) }
+        completedTrackers = Set(records)
+        delegate?.didUpdateRecords(completedTrackers)
     }
     
     private func makeTrackerRecord(from coreData: TrackerRecordCoreData) throws -> TrackerRecord {
