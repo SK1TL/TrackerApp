@@ -29,7 +29,10 @@ final class TabBarController: UITabBarController {
             selectedImage: Resources.SfSymbols.tracker?.withTintColor(.YPBlue)
         )
         
-        let statisticViewController = UINavigationController(rootViewController: StatisticViewController(viewModel: StatisticViewModel()))
+        let viewModel = StatisticViewModel()
+        let statisticViewController = UINavigationController(
+            rootViewController: StatisticViewController(viewModel: viewModel)
+        )
         
         statisticViewController.tabBarItem = UITabBarItem(
             title: NSLocalizedString("statistics", comment: ""),

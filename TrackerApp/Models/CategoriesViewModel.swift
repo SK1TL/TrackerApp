@@ -49,7 +49,7 @@ final class CategoriesViewModel {
     }
     
     func addNewCategory(with label: String?) {
-        guard let label = label else { return }
+        guard let label else { return }
         do {
             try categoryStore.makeCategory(with: label)
             categories = categoryStore.categories

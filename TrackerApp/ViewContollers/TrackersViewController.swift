@@ -16,6 +16,7 @@ final class TrackersViewController: UIViewController {
     private var textOfSearchQuery = ""
     private let trackerCategoryStore = TrackerCategoryStore()
     private let trackerRecordStore = TrackerRecordStore()
+    private var selectedFilterType: FilterType?
     
     private lazy var datePicker: UIDatePicker = {
         let datePicker = UIDatePicker()
@@ -67,6 +68,7 @@ final class TrackersViewController: UIViewController {
         )
         
         collectionView.dataSource = self
+        collectionView.contentInset = UIEdgeInsets(top: .zero, left: .zero, bottom: 50, right: .zero)
         collectionView.delegate = self
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         return collectionView
@@ -78,11 +80,11 @@ final class TrackersViewController: UIViewController {
         button.setTitle(filterTitle, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16)
         button.backgroundColor = .systemBlue
-        button.translatesAutoresizingMaskIntoConstraints = false
         button.backgroundColor = UIColor(named: "BlueForFilter")
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true
-//        button.addTarget(self, action: #selector(filterButtonTapped), for: .touchUpInside)
+        button.addTarget(self, action: #selector(filterButtonTapped), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     
@@ -144,10 +146,12 @@ final class TrackersViewController: UIViewController {
     private func setupViews() {
         if categories.isEmpty {
             trackerCollectionView.isHidden = true
+            filterButton.isHidden = true
             emptyView.isHidden = false
             emptyView.configureView(image: Resources.Images.emptyTrackers!, text: NSLocalizedString("emptyTrackers.text", comment: ""))
         } else {
             trackerCollectionView.isHidden = false
+            filterButton.isHidden = false
             emptyView.isHidden = true
             updateVisibleCategories()
         }
@@ -192,6 +196,11 @@ final class TrackersViewController: UIViewController {
         currentDate = datePicker.date
         self.dismiss(animated: false)
         updateVisibleCategories()
+    }
+    
+    @objc
+    private func filterButtonTapped() {
+        
     }
 }
 

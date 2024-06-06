@@ -13,6 +13,10 @@ final class StatisticViewController: UIViewController {
     
     private lazy var emptyView: EmptyView = {
         let emptyView = EmptyView()
+        emptyView.configureView(
+            image: Resources.Images.emptyTrackers!,
+            text: NSLocalizedString("emptyTrackers.text", comment: "")
+        )
         emptyView.translatesAutoresizingMaskIntoConstraints = false
         return emptyView
     }()
@@ -27,6 +31,7 @@ final class StatisticViewController: UIViewController {
         tableView.separatorStyle = .none
         tableView.isScrollEnabled = false
         tableView.backgroundColor = .clear
+        tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
     
@@ -41,34 +46,42 @@ final class StatisticViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = NSLocalizedString("statistics", comment: "")
+        navigationItem.title = NSLocalizedString("statistics", comment: "")
+        navigationController?.navigationBar.prefersLargeTitles = true
         view.backgroundColor = .YPWhite
-        
-        addSubviews()
-        makeConstraints()
-        bindingViewModel()
         
         tableView.dataSource = self
         tableView.delegate = self
+
+        addSubviews()
+        makeConstraints()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        bindingViewModel()
     }
     
     private func bindingViewModel() {
         viewModel.$isEmptyPlaceholderHidden.bind { [weak self] isEmptyPlaceholderHidden in
             self?.toggleStatisticsPlaceholder(show: isEmptyPlaceholderHidden)
         }
-        
+
         viewModel.$bestPeriod.bind { [weak self] newValue in
             self?.updateCellModel(for: .bestPeriod, value: newValue)
         }
         viewModel.$perfectDays.bind { [weak self] newValue in
             self?.updateCellModel(for: .perfectDays, value: newValue)
         }
-        viewModel.$complitedTrackers.bind { [weak self] newValue in
-            self?.updateCellModel(for: .complitedTrackers, value: newValue)
-        }
         viewModel.$mediumValue.bind { [weak self] newValue in
             self?.updateCellModel(for: .mediumValue, value: newValue)
         }
+        
+        viewModel.$complitedTrackers.bind { [weak self] newValue in
+            self?.updateCellModel(for: .complitedTrackers, value: newValue)
+        }
+        
+        viewModel.startObserve()
     }
     
     private func updateCellModel(for statisticsCase: StatisticsCases, value: Int) {
@@ -97,9 +110,9 @@ final class StatisticViewController: UIViewController {
             emptyView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            tableView.topAnchor.constraint(equalTo: view.bottomAnchor, constant: 77),
+            tableView.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor, constant: 77),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            tableView.heightAnchor.constraint(equalToConstant: 408)
+            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -77)
         ])
     }
 }
@@ -113,7 +126,10 @@ extension StatisticViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: StatisticCell.identifier, for: indexPath) as? StatisticCell else { return UITableViewCell() }
+        guard let cell = tableView.dequeueReusableCell(
+            withIdentifier: StatisticCell.identifier,
+            for: indexPath
+        ) as? StatisticCell else { return UITableViewCell() }
         
         let cellModel = viewModel.cellModels[indexPath.row]
         cell.configureCell(with: cellModel)

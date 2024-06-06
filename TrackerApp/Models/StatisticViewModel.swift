@@ -49,7 +49,11 @@ final class StatisticViewModel {
     private (set) var perfectDays: Int = 0
     
     @Observable
-    private (set) var complitedTrackers: Int = 0
+    private (set) var complitedTrackers: Int = 0 {
+        didSet{
+            print("Didset")
+        }
+    }
     
     @Observable
     private (set) var mediumValue: Int = 0
@@ -70,7 +74,7 @@ final class StatisticViewModel {
     private func observeBestPeriod() { }
     private func observePerfectDays() { }
     
-    private func observeComplitedTrackers() {
+    func observeComplitedTrackers() {
         guard let trackers = try? trackerRecordStore.loadCompletedTrackers().count else { return }
         self.complitedTrackers = trackers
     }
@@ -78,11 +82,6 @@ final class StatisticViewModel {
     private func observeMediumValue() { }
     
     private func checkIsStatisticsEmpty() {
-        if bestPeriod == 0 && perfectDays == 0 && complitedTrackers == 0 && mediumValue == 0 {
-            isEmptyPlaceholderHidden = false
-            return
-        }
-        isEmptyPlaceholderHidden = true
+        isEmptyPlaceholderHidden = !(bestPeriod == 0 && perfectDays == 0 && complitedTrackers == 0 && mediumValue == 0)
     }
 }
-

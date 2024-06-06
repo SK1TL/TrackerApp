@@ -119,6 +119,7 @@ extension ScheduleViewController: UITableViewDataSource {
         let switcher = UISwitch()
         switcher.onTintColor = .YPBlue
         switcher.tag = indexPath.row
+        switcher.isOn = switchDays.contains(week[indexPath.row])
         switcher.addTarget(self, action: #selector(switchTap), for: .valueChanged)
         
         let cell = UITableViewCell(style: .default, reuseIdentifier: "cell")
@@ -138,7 +139,7 @@ extension ScheduleViewController: UITableViewDataSource {
     
     private func buttonIsEnabled(_ isOn: Bool) {
         completedButton.isEnabled = isOn
-        completedButton.backgroundColor = isOn ? .YPBlack : .YPGray        
+        completedButton.backgroundColor = isOn ? .YPBlack : .YPGray
         completedButton.setTitleColor(.YPWhite, for: .normal)
     }
 }
