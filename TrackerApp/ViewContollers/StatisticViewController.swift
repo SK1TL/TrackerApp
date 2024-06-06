@@ -46,12 +46,10 @@ final class StatisticViewController: UIViewController {
         
         addSubviews()
         makeConstraints()
+        bindingViewModel()
         
-        navigationController?.navigationBar.prefersLargeTitles = true
-        navigationController?.navigationBar.tintColor = .YPBlack
-        
-        guard let emptyStatisticImage = Resources.Images.emptyStatistic else { return }
-        emptyView.configureView(image: emptyStatisticImage, text: NSLocalizedString("emptyStatistics.text", comment: ""))
+        tableView.dataSource = self
+        tableView.delegate = self
     }
     
     private func bindingViewModel() {
