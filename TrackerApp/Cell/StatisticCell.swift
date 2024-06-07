@@ -10,32 +10,11 @@ import UIKit
 final class StatisticCell: UITableViewCell {
     
     static let identifier = Identifier.idStatisticCell
-    
-    private let gradientBorderView: UIView = {
-        let view = UIView()
-        view.clipsToBounds = true
-        view.layer.cornerRadius = 16
+
+    private let containerView: UIView = {
+       let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
-    }()
-    
-    private let mainView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .YPWhite
-        view.clipsToBounds = true
-        view.layer.cornerRadius = 15
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-    
-    private let stackView: UIStackView = {
-        let stack = UIStackView()
-        stack.axis = .vertical
-        stack.backgroundColor = .clear
-        stack.distribution = .fill
-        stack.spacing = 7
-        stack.translatesAutoresizingMaskIntoConstraints = false
-        return stack
     }()
     
     private let valueLabel: UILabel = {
@@ -54,33 +33,6 @@ final class StatisticCell: UITableViewCell {
         return label
     }()
     
-    private var gradientBorder: CAGradientLayer {
-        let gradientLayer = CAGradientLayer()
-        gradientLayer.frame = gradientBorderView.bounds
-        gradientLayer.colors = [
-            UIColor.color(from: "#FD4C49").cgColor,
-            UIColor.color(from: "#46E69D").cgColor,
-            UIColor.color(from: "#007BFA").cgColor,
-        ]
-        
-        gradientLayer.startPoint = CGPoint(x: 0, y: 0.5)
-        gradientLayer.endPoint = CGPoint(x: 1, y: 0.5)
-        
-        return gradientLayer
-    }
-    
-    //MARK: - Lifecycle
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        
-        gradientBorder.removeFromSuperlayer()
-        
-        DispatchQueue.main.async { [weak self] in
-            self?.gradientBorderView.layer.insertSublayer(self?.gradientBorder ?? CAGradientLayer(), at: 0)
-        }
-    }
-    
     //MARK: - Methods
     
     func configureCell(with model: StatisticsCellModel) {
@@ -88,36 +40,49 @@ final class StatisticCell: UITableViewCell {
         
         addSubview()
         setConstraints()
+        addGradientBorder()
         
         valueLabel.text = model.value
         descriptionLabel.text = model.description
     }
     
     private func addSubview() {
-        contentView.addSubview(gradientBorderView)
-        gradientBorderView.addSubview(mainView)
-        mainView.addSubview(stackView)
-        stackView.addArrangedSubview(valueLabel)
-        stackView.addArrangedSubview(descriptionLabel)
+        contentView.addSubview(containerView)
+        containerView.addSubview(valueLabel)
+        containerView.addSubview(descriptionLabel)
     }
     
     private func setConstraints() {
-        
         NSLayoutConstraint.activate([
-            gradientBorderView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            gradientBorderView.topAnchor.constraint(equalTo: contentView.topAnchor),
-            gradientBorderView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            gradientBorderView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -12),
+            containerView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            containerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            containerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            containerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -12),
             
-            mainView.leadingAnchor.constraint(equalTo: gradientBorderView.leadingAnchor, constant: 1),
-            mainView.topAnchor.constraint(equalTo: gradientBorderView.topAnchor, constant: 1),
-            mainView.trailingAnchor.constraint(equalTo: gradientBorderView.trailingAnchor, constant: -1),
-            mainView.bottomAnchor.constraint(equalTo: gradientBorderView.bottomAnchor, constant: -1),
+            valueLabel.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 12),
+            valueLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 12),
+            valueLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -12),
             
-            stackView.topAnchor.constraint(equalTo: mainView.topAnchor, constant: 11),
-            stackView.leadingAnchor.constraint(equalTo: mainView.leadingAnchor, constant: 11),
-            stackView.trailingAnchor.constraint(equalTo: mainView.trailingAnchor, constant: -11),
-            stackView.bottomAnchor.constraint(equalTo: mainView.bottomAnchor, constant: -11)
+            descriptionLabel.topAnchor.constraint(equalTo: valueLabel.bottomAnchor, constant: 7),
+            descriptionLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 12),
+            descriptionLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -12),
+            descriptionLabel.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -12)
         ])
+    }
+    
+    private func addGradientBorder() {
+        let gradient = UIImage.gradientImage(
+            bounds: containerView.bounds,
+            colors: [
+                UIColor.color(from: "FD4C49"),
+                UIColor.color(from: "46E69D"),
+                UIColor.color(from: "007BFA")
+            ]
+        )
+        let gradientColor = UIColor(patternImage: gradient)
+        
+        containerView.layer.borderColor = gradientColor.cgColor
+        containerView.layer.borderWidth = 2
+        containerView.layer.cornerRadius = 16
     }
 }

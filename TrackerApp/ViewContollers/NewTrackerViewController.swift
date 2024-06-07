@@ -289,7 +289,7 @@ extension NewTrackerViewController: UITableViewDataSource {
             cell.textLabel?.text = NSLocalizedString("category", comment: "")
             cell.detailTextLabel?.text = currentCategory
         case 1:
-            cell.textLabel?.text = NSLocalizedString("schedile", comment: "")
+            cell.textLabel?.text = NSLocalizedString("schedule", comment: "")
             cell.detailTextLabel?.text = scheduleToString(for: schedule)
         default:
             break

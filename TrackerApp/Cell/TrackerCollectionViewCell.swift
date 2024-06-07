@@ -120,23 +120,14 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
     }
     
     func configRecord(countDay: Int, isDoneToday: Bool) {
-        addButton.setTitle(isDoneToday ? "✓" : "+", for: .normal)        
+        addButton.setTitle(isDoneToday ? "✓" : "+", for: .normal)
         addButton.layer.opacity = isDoneToday ? 0.3 : 1
-        updateCounter(countDay)
-    }
-    
-    private func updateCounter(_ counter: Int) {
-        switch counter {
-        case _ where (1 == counter % 10) && !(10...19 ~= counter % 100):
-            counterLabel.text = String(counter) + " " + "день"
-        case _ where (2...4 ~= counter % 10) && !(10...19 ~= counter % 100):
-            counterLabel.text = String(counter) + " " + "дня"
-        default:
-            counterLabel.text = String(counter) + " " + "дней"
-        }
+        counterLabel.text = "\(countDay) " + String.getLocalizedNounForNumber(countDay)
     }
     
     @objc func didTapedButton() {
         delegate?.didTapedDoneButton(cell: self)
     }
 }
+
+

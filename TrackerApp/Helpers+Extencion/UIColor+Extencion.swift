@@ -72,7 +72,7 @@ extension UIColor {
     }
     
     static func color(from hex: String) -> UIColor {
-        var rgbValue:UInt64 = 0
+        var rgbValue: UInt64 = 0
         Scanner(string: hex).scanHexInt64(&rgbValue)
         return UIColor(
             red: CGFloat((rgbValue & 0xFF0000) >> 16) / 255.0,

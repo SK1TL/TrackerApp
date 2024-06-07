@@ -101,6 +101,16 @@ final class TrackersViewController: UIViewController {
         makeConstraints()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        AnalyticsServices.report(event: "open", screen: "Main")
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        AnalyticsServices.report(event: "close", screen: "main")
+    }
+    
     // MARK: - Configure constraints / Add subviews
     
     private func addSubviews() {
@@ -187,6 +197,7 @@ final class TrackersViewController: UIViewController {
     // MARK: - Action private funс
     
     @objc private func addTracker() {
+        AnalyticsServices.report(event: "tapped", screen: "main", item: "add_tracker")
         let typeNewTrackerVC = CreateTrackerViewCntroller(categories: categories)
         typeNewTrackerVC.delegate = self
         present(typeNewTrackerVC, animated: true)
@@ -200,7 +211,8 @@ final class TrackersViewController: UIViewController {
     
     @objc
     private func filterButtonTapped() {
-        
+        AnalyticsServices.report(event: "tap", screen: "main", item: "filter")
+
     }
 }
 
@@ -239,6 +251,7 @@ extension TrackersViewController: UICollectionViewDataSource {
         cell.delegate = self
         cell.configeCell(tracker: tracker)
         cell.configRecord(countDay: daysCount, isDoneToday: isDoneToday)
+        
         return cell
     }
     

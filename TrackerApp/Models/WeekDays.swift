@@ -38,19 +38,19 @@ enum WeekDays: String, Comparable, CaseIterable {
     var dayName: String {
         switch self {
         case .monday:
-            return "Понедельник"
+            return NSLocalizedString("monday", comment: "")
         case .tuesday:
-            return "Вторник"
+            return NSLocalizedString("tuesday", comment: "")
         case .wednesday:
-            return "Среда"
+            return NSLocalizedString("wednesday", comment: "")
         case .thursday:
-            return "Четверг"
+            return NSLocalizedString("thursday", comment: "")
         case .friday:
-            return "Пятница"
+            return NSLocalizedString("friday", comment: "")
         case .saturday:
-            return "Суббота"
+            return NSLocalizedString("saturday", comment: "")
         case .sunday:
-            return "Воскресенье"
+            return NSLocalizedString("sunday", comment: "")
         }
     }
     

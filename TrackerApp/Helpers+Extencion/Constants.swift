@@ -15,3 +15,4 @@ struct Identifier {
     
     static let idStatisticCell = "StatisticCell"
 }
+
