@@ -102,7 +102,7 @@ extension CreateCategoryViewController {
     private func addSubviews() {
         view.backgroundColor = .ypWhite
         
-        [titleLabel, confirmButton,textField].forEach {view.addViewsTAMIC($0)}
+        [titleLabel, confirmButton,textField].forEach {view.addViewsWithTranslatesAutoresizingMask($0)}
     }
     
     private func setConstraints() {

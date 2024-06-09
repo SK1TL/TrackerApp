@@ -95,16 +95,18 @@ final class TrackersViewController: UIViewController {
     private let trackerCategoryStore = TrackerCategoryStore.shared
     private let trackerRecordStore = TrackerRecordStore.shared
     
-    private var params = UICollectionView.GeometricParams(cellCount: 2,
-                                                          leftInset: 16,
-                                                          rightInset: 16,
-                                                          cellSpacing: 9
+    private var params = UICollectionView.GeometricParams(
+        cellCount: 2,
+        leftInset: 16,
+        rightInset: 16,
+        cellSpacing: 9
     )
     private var searchText = "" {
         didSet {
             try? trackerStore.loadFilteredTrackers(date: currentDate.onlyDate(), searchString: searchText)
         }
     }
+    
     private var currentDate = Date().onlyDate()
     private var completedTrackers: Set<TrackerRecord> = []
     private var editingTracker: Tracker?
@@ -481,7 +483,7 @@ extension TrackersViewController {
         [trackersLabel,addButton,
          datePicker,searchTextField,
          collectionView,emptyTrackersLabel,
-         emptyTrackersImageView,filterButton].forEach {view.addViewsTAMIC($0)}
+         emptyTrackersImageView,filterButton].forEach {view.addViewsWithTranslatesAutoresizingMask($0)}
     }
     
     private func setConstraints() {

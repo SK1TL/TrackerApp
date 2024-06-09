@@ -75,7 +75,7 @@ final class SelectTypeEventViewController: UIViewController {
         view.backgroundColor = .ypWhite
         
         [titleLabel, addRegularEventButton, addIrregularEventButton].forEach {
-            view.addViewsTAMIC($0)
+            view.addViewsWithTranslatesAutoresizingMask($0)
         }
     }
     

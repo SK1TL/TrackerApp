@@ -555,12 +555,12 @@ extension NewTrackerViewController {
     
     private func addSubviews() {
         view.backgroundColor = .ypWhite
-        view.addViewsTAMIC(titleLabel)
-        view.addViewsTAMIC(scrollView)
-        scrollView.addViewsTAMIC(contentView)
+        view.addViewsWithTranslatesAutoresizingMask(titleLabel)
+        view.addViewsWithTranslatesAutoresizingMask(scrollView)
+        scrollView.addViewsWithTranslatesAutoresizingMask(contentView)
         
         [stackView, tableView, collectionView, createButton, cancelButton].forEach {
-            contentView.addViewsTAMIC($0)
+            contentView.addViewsWithTranslatesAutoresizingMask($0)
         }
         
         stackView.addArrangedSubview(textField)

@@ -154,7 +154,7 @@ extension ScheduleViewController {
     private func addSubviews() {
         view.backgroundColor = .ypWhite
         
-        [titleLabel, tableView, confirmButton].forEach {view.addViewsTAMIC($0)}
+        [titleLabel, tableView, confirmButton].forEach {view.addViewsWithTranslatesAutoresizingMask($0)}
     }
     
     private func setConstraints() {

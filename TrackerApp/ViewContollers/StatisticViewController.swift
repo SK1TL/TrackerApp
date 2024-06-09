@@ -146,7 +146,7 @@ extension StatisticViewController {
         view.backgroundColor = .ypWhite
         
         [titleLabel, emptyStatisticsLabel,
-         emptyStatisticsImageView, tableView].forEach { view.addViewsTAMIC($0) }
+         emptyStatisticsImageView, tableView].forEach { view.addViewsWithTranslatesAutoresizingMask($0) }
     }
     
     private func setConstraints() {

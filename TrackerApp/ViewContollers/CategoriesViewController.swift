@@ -221,7 +221,7 @@ extension CategoriesViewController {
          categoryTableView,
          emptyCategoriesLabel,
          emptyCategoriesImageView
-        ].forEach {view.addViewsTAMIC($0)}
+        ].forEach {view.addViewsWithTranslatesAutoresizingMask($0)}
     }
         private func setConstraints() {
             

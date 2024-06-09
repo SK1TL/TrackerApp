@@ -7,33 +7,12 @@
 
 import UIKit
 
-enum FilterType: CaseIterable {
-    case allTrackers
-    case trackersOnToday
-    case completedTrackers
-    case uncompletedTrackers
-    
-    var typeTitle: String {
-        switch self {
-        case .allTrackers:
-            return "Все трекеры"
-        case .trackersOnToday:
-            return "Трекеры на сегодня"
-        case .completedTrackers:
-            return "Завершенные"
-        case .uncompletedTrackers:
-            return "Не завершенные"
-        }
-    }
-}
-
 final class FilterTrackerViewController: UIViewController {
-    
     var tableView: UITableView!
     
-    let filters = FilterType.allCases
-    var selectedFilterType: FilterType?
-    var onFilterSelected: ((FilterType) -> Void)?
+    let filters = ["Все трекеры", "Трекеры на сегодня", "Завершенные", "Не завершенные"]
+    var selectedFilter: String = "Трекеры на сегодня"
+    var onFilterSelected: ((String) -> Void)?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -64,7 +43,7 @@ final class FilterTrackerViewController: UIViewController {
     }
     
     private func configureNavBar(){
-        navigationItem.title = NSLocalizedString("filters", comment: "")
+        navigationItem.title = "Фильтры"
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
     }
 }
@@ -76,8 +55,8 @@ extension FilterTrackerViewController: UITableViewDelegate, UITableViewDataSourc
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        cell.textLabel?.text = filters[indexPath.row].typeTitle
-        cell.accessoryType = selectedFilterType == filters[indexPath.row] ? .checkmark : .none
+        cell.textLabel?.text = filters[indexPath.row]
+        cell.accessoryType = selectedFilter == filters[indexPath.row] ? .checkmark : .none
         cell.backgroundColor = UIColor(named: "GrayForTableViews")?.withAlphaComponent(0.3)
         cell.textLabel?.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         return cell
@@ -103,10 +82,9 @@ extension FilterTrackerViewController: UITableViewDelegate, UITableViewDataSourc
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        selectedFilterType = filters[indexPath.row]
+        selectedFilter = filters[indexPath.row]
         tableView.reloadData()
-        guard let selectedFilterType else { return }
-        onFilterSelected?(selectedFilterType)
+        onFilterSelected?(selectedFilter)
         dismiss(animated: true, completion: nil)
     }
 }
