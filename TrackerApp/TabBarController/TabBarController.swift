@@ -10,37 +10,60 @@ import UIKit
 
 final class TabBarController: UITabBarController {
     
+    private enum TabBarItem: Int {
+        case tracker
+        case statistic
+        
+        var title: String {
+            switch self {
+            case .tracker:
+                return NSLocalizedString("trackers", comment: "")
+            case .statistic:
+                return NSLocalizedString("statistics", comment: "")
+            }
+        }
+        
+        var iconName: String {
+            switch self {
+            case .tracker:
+                return "record.circle.fill"
+            case .statistic:
+                return "hare.fill"
+            }
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        tabBar.backgroundColor = .YPWhite
-        tabBar.barTintColor = .YPWhite
-        tabBar.tintColor = .YPBlue
-        tabBar.unselectedItemTintColor = .YPGray
         
-        tabBar.layer.borderWidth = 0.50
-        tabBar.layer.borderColor = UIColor.YPGray.cgColor
-        tabBar.clipsToBounds = true
+        setupTabBar()
+    }
+    
+    private func setupTabBar() {
+        tabBar.backgroundColor = .ypWhite
         
-        let trackerViewController = UINavigationController(rootViewController: TrackersViewController())
+        let dataSource: [TabBarItem] = [.tracker, .statistic]
         
-        trackerViewController.tabBarItem = UITabBarItem(
-            title: NSLocalizedString("trackers", comment: ""),
-            image: Resources.SfSymbols.tracker?.withTintColor(.YPGray),
-            selectedImage: Resources.SfSymbols.tracker?.withTintColor(.YPBlue)
-        )
+        let lineView = UIView(frame: CGRect(x: 0, y: 0, width: tabBar.frame.width, height: 1))
+        lineView.backgroundColor = UIColor.tabBarBorderLineColor
+        tabBar.insertSubview(lineView, at: 0)
+
+        tabBar.barTintColor = .ypGray
+        tabBar.barTintColor = .ypBlue
+        tabBar.backgroundColor = .ypWhite
         
-        let viewModel = StatisticViewModel()
-        let statisticViewController = UINavigationController(
-            rootViewController: StatisticViewController(viewModel: viewModel)
-        )
+        self.viewControllers = dataSource.map {
+            switch $0 {
+            case .tracker:
+                return TrackersViewController(trackerStore: TrackerStore())
+            case .statistic:
+                return StatisticViewController(viewModel: StatisticsViewModel())
+            }
+        }
         
-        statisticViewController.tabBarItem = UITabBarItem(
-            title: NSLocalizedString("statistics", comment: ""),
-            image: Resources.SfSymbols.statistic?.withTintColor(.YPGray),
-            selectedImage: Resources.SfSymbols.statistic?.withTintColor(.YPBlue)
-        )
-        
-        selectedIndex = 0
-        viewControllers = [trackerViewController, statisticViewController]
+        viewControllers?.enumerated().forEach {
+            $1.tabBarItem.title = dataSource[$0].title
+            $1.tabBarItem.image = UIImage(systemName: dataSource[$0].iconName)
+        }
     }
 }

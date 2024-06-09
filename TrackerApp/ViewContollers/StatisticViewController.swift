@@ -9,16 +9,27 @@ import UIKit
 
 final class StatisticViewController: UIViewController {
     
-    private var viewModel: StatisticViewModel
+    private var viewModel: StatisticsViewModel
     
-    private lazy var emptyView: EmptyView = {
-        let emptyView = EmptyView()
-        emptyView.configureView(
-            image: Resources.Images.emptyTrackers!,
-            text: NSLocalizedString("emptyTrackers.text", comment: "")
-        )
-        emptyView.translatesAutoresizingMaskIntoConstraints = false
-        return emptyView
+    private lazy var titleLabel: UILabel = {
+        let label = UILabel()
+        label.text = NSLocalizedString("statistics", comment: "")
+        label.font = UIFont.ypBold34()
+        label.textColor = .toggleBlackWhiteColor
+        return label
+    }()
+    
+    private lazy var emptyStatisticsImageView: UIImageView = {
+        let image = UIImageView()
+        image.image = UIImage(named: "crySmile")!
+        return image
+    }()
+    
+    private lazy var emptyStatisticsLabel: UILabel = {
+        let label = UILabel()
+        label.text = NSLocalizedString("emptyStatistics.text", comment: "")
+        label.font = UIFont.ypMedium12()
+        return label
     }()
     
     private lazy var tableView: UITableView = {
@@ -31,11 +42,10 @@ final class StatisticViewController: UIViewController {
         tableView.separatorStyle = .none
         tableView.isScrollEnabled = false
         tableView.backgroundColor = .clear
-        tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
     
-    init(viewModel: StatisticViewModel) {
+    init(viewModel: StatisticsViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
@@ -44,44 +54,44 @@ final class StatisticViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Lifecycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationItem.title = NSLocalizedString("statistics", comment: "")
-        navigationController?.navigationBar.prefersLargeTitles = true
-        view.backgroundColor = .YPWhite
+        
+        addSubviews()
+        setConstraints()
+        bindingViewModel()
         
         tableView.dataSource = self
         tableView.delegate = self
 
-        addSubviews()
-        makeConstraints()
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        bindingViewModel()
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        viewModel.startObserve()
     }
+    
+    // MARK: - Private func
     
     private func bindingViewModel() {
         viewModel.$isEmptyPlaceholderHidden.bind { [weak self] isEmptyPlaceholderHidden in
             self?.toggleStatisticsPlaceholder(show: isEmptyPlaceholderHidden)
         }
-
+        
         viewModel.$bestPeriod.bind { [weak self] newValue in
             self?.updateCellModel(for: .bestPeriod, value: newValue)
         }
         viewModel.$perfectDays.bind { [weak self] newValue in
             self?.updateCellModel(for: .perfectDays, value: newValue)
         }
-        viewModel.$mediumValue.bind { [weak self] newValue in
-            self?.updateCellModel(for: .mediumValue, value: newValue)
-        }
-        
         viewModel.$complitedTrackers.bind { [weak self] newValue in
             self?.updateCellModel(for: .complitedTrackers, value: newValue)
         }
-        
-        viewModel.startObserve()
+        viewModel.$mediumValue.bind { [weak self] newValue in
+            self?.updateCellModel(for: .mediumValue, value: newValue)
+        }
     }
     
     private func updateCellModel(for statisticsCase: StatisticsCases, value: Int) {
@@ -96,24 +106,9 @@ final class StatisticViewController: UIViewController {
     }
     
     private func toggleStatisticsPlaceholder(show: Bool) {
-        emptyView.isHidden = show
+        emptyStatisticsImageView.isHidden = show
+        emptyStatisticsLabel.isHidden = show
         tableView.isHidden = !show
-    }
-    
-    private func addSubviews() {
-        [emptyView, tableView].forEach { view.addSubview($0) }
-    }
-    
-    private func makeConstraints() {
-        NSLayoutConstraint.activate([
-            emptyView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            emptyView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            tableView.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor, constant: 77),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -77)
-        ])
     }
 }
 
@@ -126,10 +121,7 @@ extension StatisticViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(
-            withIdentifier: StatisticCell.identifier,
-            for: indexPath
-        ) as? StatisticCell else { return UITableViewCell() }
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: StatisticCell.identifier, for: indexPath) as? StatisticCell else { return UITableViewCell() }
         
         let cellModel = viewModel.cellModels[indexPath.row]
         cell.configureCell(with: cellModel)
@@ -143,5 +135,36 @@ extension StatisticViewController: UITableViewDataSource {
 extension StatisticViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         102
+    }
+}
+
+// MARK: - Set constraints / Add subviews
+
+extension StatisticViewController {
+    
+    private func addSubviews() {
+        view.backgroundColor = .ypWhite
+        
+        [titleLabel, emptyStatisticsLabel,
+         emptyStatisticsImageView, tableView].forEach { view.addViewsTAMIC($0) }
+    }
+    
+    private func setConstraints() {
+        
+        NSLayoutConstraint.activate([
+            titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            titleLabel.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 52),
+            
+            emptyStatisticsImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            emptyStatisticsImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            
+            emptyStatisticsLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            emptyStatisticsLabel.topAnchor.constraint(equalTo: emptyStatisticsImageView.bottomAnchor, constant: 8),
+            
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            tableView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 77),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            tableView.heightAnchor.constraint(equalToConstant: 408)
+        ])
     }
 }

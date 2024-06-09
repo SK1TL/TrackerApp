@@ -7,72 +7,158 @@
 
 import UIKit
 
-protocol ScheduleViewControllerDelegate: AnyObject {
-    func addNewSchedule(_ newSchedule: [WeekDays])
-}
-
-final class ScheduleViewController: UIViewController, UITableViewDelegate {
+final class ScheduleViewController: UIViewController {
     
-    weak var delegate: ScheduleViewControllerDelegate?
-    var switchDays: [WeekDays] = []
-    private var week = WeekDays.allCases
+    var selectedDays: [String]
+    var provideSelectedDays: (([String]) -> Void)?
+    private let preferredOrder = WeekDay.allCases.map{$0.shortName}
     
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
-        label.font = Resources.Fonts.ypMedium16()
+        label.font = UIFont.ypMedium16()
+        label.textColor = .toggleBlackWhiteColor
         label.text = NSLocalizedString("schedule", comment: "")
-        label.textColor = .YPBlack
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
     private lazy var tableView: UITableView = {
-        let tableView = UITableView()
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
-        tableView.dataSource = self
-        tableView.delegate = self
-        tableView.layer.cornerRadius = 16
-        tableView.clipsToBounds = true
-        tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
-        tableView.separatorColor = .YPGray
-        tableView.backgroundColor = .YPWhite
-        tableView.isScrollEnabled = false
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        return tableView
+        let table = UITableView()
+        table.layer.masksToBounds = true
+        table.bounces = false
+        table.backgroundColor = .clear
+        table.layer.cornerRadius = 16
+        table.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        table.separatorColor = .ypGray
+        return table
     }()
     
-    private lazy var completedButton: UIButton = {
-        let button = UIButton(type: .system)
+    private lazy var confirmButton: UIButton = {
+        let button = UIButton(type: .custom)
+        button.setTitleColor(.blackGrayColorButton, for: .normal)
+        button.backgroundColor = .toggleBlackWhiteColor
         button.setTitle(NSLocalizedString("ready", comment: ""), for: .normal)
-        button.setTitleColor(.YPWhite, for: .normal)
-        button.titleLabel?.font = Resources.Fonts.ypMedium16()
-        button.backgroundColor = .YPGray
+        button.titleLabel?.textAlignment = .center
+        button.titleLabel?.font = UIFont.ypMedium16()
+        button.layer.masksToBounds = true
         button.layer.cornerRadius = 16
-        button.clipsToBounds = true
-        button.addTarget(self, action: #selector(completedButtonTapped), for: .touchUpInside)
-        button.isEnabled = false
-        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(didTapConfirmButton), for: .touchUpInside)
         return button
     }()
     
-    // MARK: - Lifecycle
+    init(selectedDays: [String]) {
+        self.selectedDays = selectedDays
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    // MARK: - LifeCycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .YPWhite
+        
         addSubviews()
-        makeConstraints()
+        setConstraints()
+        
+        tableView.dataSource = self
+        tableView.delegate = self
     }
     
-    // MARK: - Configure constraints / Add subviews
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        let sortedSelectedDays = sortSelectedDays(selectedDays)
+        provideSelectedDays?(sortedSelectedDays)
+    }
+    
+    private func sortSelectedDays(_ days: [String]) -> [String] {
+        return days.sorted { preferredOrder.firstIndex(of: $0)! < preferredOrder.firstIndex(of: $1)! }
+    }
+    
+    @objc
+    private func didTapConfirmButton() {
+        dismiss(animated: true)
+    }
+    
+    @objc
+    private func didTapSwitcher(_ sender: UISwitch) {
+        if sender.isOn {
+            switch sender.tag {
+            case 0: selectedDays.append(WeekDay.monday.shortName)
+            case 1: selectedDays.append(WeekDay.tuesday.shortName)
+            case 2: selectedDays.append(WeekDay.wednesday.shortName)
+            case 3: selectedDays.append(WeekDay.thursday.shortName)
+            case 4: selectedDays.append(WeekDay.friday.shortName)
+            case 5: selectedDays.append(WeekDay.saturday.shortName)
+            case 6: selectedDays.append(WeekDay.sunday.shortName)
+            default: break
+            }
+        } else {
+            switch sender.tag {
+            case 0: selectedDays.removeAll { $0 == WeekDay.monday.shortName }
+            case 1: selectedDays.removeAll { $0 == WeekDay.tuesday.shortName }
+            case 2: selectedDays.removeAll { $0 == WeekDay.wednesday.shortName }
+            case 3: selectedDays.removeAll { $0 == WeekDay.thursday.shortName }
+            case 4: selectedDays.removeAll { $0 == WeekDay.friday.shortName }
+            case 5: selectedDays.removeAll { $0 == WeekDay.saturday.shortName }
+            case 6: selectedDays.removeAll { $0 == WeekDay.sunday.shortName }
+            default: break
+            }
+        }
+    }
+    
+}
+
+// MARK: - UITableViewDelegate
+
+extension ScheduleViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        75
+    }
+}
+
+// MARK: - UITableViewDataSource
+
+extension ScheduleViewController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        WeekDay.allCases.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let switcher = UISwitch()
+        switcher.onTintColor = .ypBlue
+        switcher.tag = indexPath.row
+        switcher.addTarget(self, action: #selector(didTapSwitcher(_:)), for: .valueChanged)
+        
+        let cell = UITableViewCell(style: .default, reuseIdentifier: "cell")
+        let weekday = WeekDay.allCases[indexPath.row]
+        cell.selectionStyle = .none
+        cell.backgroundColor = .ypBackground
+        cell.textLabel?.text = weekday.localizedName
+        cell.textLabel?.font = UIFont.systemFont(ofSize: 17, weight: .regular)
+        cell.accessoryView = switcher
+        if !selectedDays.isEmpty {
+            if selectedDays.contains(weekday.shortName) {
+                switcher.isOn = true
+            }
+        }
+        return cell
+    }
+}
+
+// MARK: - Set constraints / Add subviews
+
+extension ScheduleViewController {
     
     private func addSubviews() {
-        view.addSubview(titleLabel)
-        view.addSubview(tableView)
-        view.addSubview(completedButton)
+        view.backgroundColor = .ypWhite
+        
+        [titleLabel, tableView, confirmButton].forEach {view.addViewsTAMIC($0)}
     }
     
-    private func makeConstraints() {
+    private func setConstraints() {
+        
         NSLayoutConstraint.activate([
             titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             titleLabel.bottomAnchor.constraint(equalTo: view.topAnchor, constant: 40),
@@ -82,64 +168,10 @@ final class ScheduleViewController: UIViewController, UITableViewDelegate {
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             tableView.heightAnchor.constraint(equalToConstant: 524),
             
-            completedButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50),
-            completedButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            completedButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            completedButton.heightAnchor.constraint(equalToConstant: 60),
+            confirmButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50),
+            confirmButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            confirmButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            confirmButton.heightAnchor.constraint(equalToConstant: 60),
         ])
-    }
-    
-    // MARK: - Action private func
-    
-    @objc private func completedButtonTapped() {
-        self.delegate?.addNewSchedule(self.switchDays)
-        dismiss(animated: true)
-    }
-    
-    @objc private func switchTap(_ sender: UISwitch) {
-        if sender.isOn {
-            switchDays.append(week[sender.tag])
-        } else {
-            if let index = switchDays.firstIndex(of: week[sender.tag]) {
-                switchDays.remove(at: index)
-            }
-        }
-        buttonIsEnabled(!switchDays.isEmpty)
-    }
-}
-
-// MARK: - UITableViewDataSource
-
-extension ScheduleViewController: UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        WeekDays.allCases.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let switcher = UISwitch()
-        switcher.onTintColor = .YPBlue
-        switcher.tag = indexPath.row
-        switcher.isOn = switchDays.contains(week[indexPath.row])
-        switcher.addTarget(self, action: #selector(switchTap), for: .valueChanged)
-        
-        let cell = UITableViewCell(style: .default, reuseIdentifier: "cell")
-        cell.selectionStyle = .none
-        cell.backgroundColor = .ypBackground
-        cell.textLabel?.text = week[indexPath.row].dayName
-        cell.textLabel?.font = Resources.Fonts.ypRegular17()
-        cell.accessoryView = switcher
-        return cell
-    }
-    
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        75
-    }
-    
-    // MARK: - Private func
-    
-    private func buttonIsEnabled(_ isOn: Bool) {
-        completedButton.isEnabled = isOn
-        completedButton.backgroundColor = isOn ? .YPBlack : .YPGray
-        completedButton.setTitleColor(.YPWhite, for: .normal)
     }
 }

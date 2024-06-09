@@ -8,21 +8,45 @@
 import Foundation
 import YandexMobileMetrica
 
-struct AnalyticsServices{
-    static func activate(){
+enum Events: String {
+    case click = "click"
+    case open = "open"
+    case close = "close"
+}
+
+enum Screens: String {
+    case main = "Main"
+}
+
+enum Items: String {
+    case addTrack = "add_track"
+    case track = "track"
+    case filter = "filter"
+    case edit = "edit"
+    case delete = "delete"
+}
+
+struct AnalyticsService{
+    static func initAppMetrica(){
         guard let configuration = YMMYandexMetricaConfiguration(apiKey: "3ea9f24f-52cc-4510-b582-88ec8cdf5d5f") else { return }
         
         YMMYandexMetrica.activate(with: configuration)
     }
 
-    static func report(event: String, screen: String, item: String? = nil) {
-        var params: [String: Any] = ["event": event, "screen": screen]
-        if let item = item {
-            params["item"] = item
-        }
-        
-        YMMYandexMetrica.reportEvent(event, parameters: params, onFailure: { error in
-            print("REPORT ERROR: \(error.localizedDescription)")
+    func reportEvent(event: Events, screen: Screens, item: Items) {
+        let params = [
+            "screen": screen.rawValue,
+            "item" : item.rawValue
+        ]
+        YMMYandexMetrica.reportEvent(event.rawValue, parameters: params, onFailure: { error in
+            print("REPORT ERROR: %@", error.localizedDescription)
+        })
+    }
+    
+    func reportScreen(event: Events, onScreen: Screens) {
+        let params = ["screen" : onScreen.rawValue]
+        YMMYandexMetrica.reportEvent(event.rawValue, parameters: params, onFailure: { error in
+            print("REPORT ERROR: %@", error.localizedDescription)
         })
     }
 }

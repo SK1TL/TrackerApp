@@ -2,7 +2,7 @@
 //  AlertPresenter.swift
 //  TrackerApp
 //
-//  Created by Артур Гайфуллин on 15.05.2024.
+//  Created by Артур Гайфуллин on 09.06.2024.
 //
 
 import UIKit
@@ -12,7 +12,7 @@ struct AlertModel {
     var message: String?
     var buttonText: String
     var completion: ((UIAlertAction) -> Void)?
-    var cancelText: String?
+    var cancelText: String
     var cancelCompletion: ((UIAlertAction) -> Void)?
 }
 

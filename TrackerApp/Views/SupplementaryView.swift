@@ -9,34 +9,37 @@ import UIKit
 
 final class SupplementaryView: UICollectionReusableView {
     
-    static let identifier = Identifier.idSupply
+    static let identifier = Identifier.idSupple
     
-    lazy var titleLabel: UILabel = {
+    lazy var headerLabel: UILabel = {
         let label = UILabel()
-        label.font = Resources.Fonts.ypBold19()
+        label.font = UIFont.ypBold19()
+        label.textColor = .toggleBlackWhiteColor
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        addSubviews()
-        makeConstraints()
+        
+        addSubview()
+        setConstraints()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private func addSubviews() {
-        addSubview(titleLabel)
+    private func addSubview() {
+        addSubview(headerLabel)
     }
     
-    private func makeConstraints() {
+    private func setConstraints() {
+        
         NSLayoutConstraint.activate([
-            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 28),
-            titleLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
-            titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor)
+            headerLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 28),
+            headerLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
+            headerLabel.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
     }
 }

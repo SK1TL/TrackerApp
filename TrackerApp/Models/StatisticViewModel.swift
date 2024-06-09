@@ -7,7 +7,7 @@
 
 import UIKit
 
-enum StatisticsCases:  CaseIterable, CustomStringConvertible {
+enum StatisticsCases: CaseIterable, CustomStringConvertible {
     case bestPeriod
     case perfectDays
     case complitedTrackers
@@ -27,7 +27,7 @@ enum StatisticsCases:  CaseIterable, CustomStringConvertible {
     }
 }
 
-final class StatisticViewModel {
+final class StatisticsViewModel {
     
     private let trackerRecordStore = TrackerRecordStore.shared
     
@@ -49,11 +49,7 @@ final class StatisticViewModel {
     private (set) var perfectDays: Int = 0
     
     @Observable
-    private (set) var complitedTrackers: Int = 0 {
-        didSet{
-            print("Didset")
-        }
-    }
+    private (set) var complitedTrackers: Int = 0
     
     @Observable
     private (set) var mediumValue: Int = 0
@@ -74,7 +70,7 @@ final class StatisticViewModel {
     private func observeBestPeriod() { }
     private func observePerfectDays() { }
     
-    func observeComplitedTrackers() {
+    private func observeComplitedTrackers() {
         guard let trackers = try? trackerRecordStore.loadCompletedTrackers().count else { return }
         self.complitedTrackers = trackers
     }
@@ -82,6 +78,10 @@ final class StatisticViewModel {
     private func observeMediumValue() { }
     
     private func checkIsStatisticsEmpty() {
-        isEmptyPlaceholderHidden = !(bestPeriod == 0 && perfectDays == 0 && complitedTrackers == 0 && mediumValue == 0)
+        if bestPeriod == 0 && perfectDays == 0 && complitedTrackers == 0 && mediumValue == 0 {
+            isEmptyPlaceholderHidden = false
+            return
+        }
+        isEmptyPlaceholderHidden = true
     }
 }

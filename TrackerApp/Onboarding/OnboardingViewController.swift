@@ -8,24 +8,23 @@
 import UIKit
 
 final class OnboardingViewController: UIViewController {
+    
     private(set) var page: Pages
     
     private lazy var imageView: UIImageView = {
         let imageView = UIImageView()
         let image = UIImage(named: String(page.index))
         imageView.image = image
-        imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
     
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.text = page.title
-        label.font = Resources.Fonts.ypBold32()
+        label.font = .ypBold32()
         label.textColor = .black
         label.numberOfLines = 3
         label.textAlignment = .center
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
@@ -42,16 +41,15 @@ final class OnboardingViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        addSubviews()
-        makeConstraints()
+        addSubview()
+        setConstraints()
     }
     
-    private func addSubviews() {
-        view.addSubview(imageView)
-        view.addSubview(titleLabel)
+    private func addSubview() {
+        [imageView, titleLabel].forEach{view.addViewsTAMIC($0)}
     }
     
-    private func makeConstraints() {
+    private func setConstraints() {
         NSLayoutConstraint.activate([
             imageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             imageView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
@@ -64,3 +62,4 @@ final class OnboardingViewController: UIViewController {
         ])
     }
 }
+

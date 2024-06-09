@@ -2,10 +2,8 @@
 //  Observable.swift
 //  TrackerApp
 //
-//  Created by Артур Гайфуллин on 15.05.2024.
+//  Created by Артур Гайфуллин on 09.06.2024.
 //
-
-import Foundation
 
 @propertyWrapper
 final class Observable<Value> {

@@ -11,18 +11,13 @@ final class EmojiAndColorsCollectionCell: UICollectionViewCell {
     
     static var reuseIdentifier = Identifier.idEmojiAndColorsCell
     
-    private lazy var label: UILabel = {
+    lazy var label: UILabel = {
         let label = UILabel()
-        label.font = Resources.Fonts.ypBold32()
-        label.text = ""
-        label.textColor = .YPBlack
+        label.font = UIFont.ypBold32()
+        label.textColor = .ypBlack
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-    
-    var labelText: String? {
-        label.text
-    }
     
     override func layoutSubviews() {
         super.layoutSubviews()
@@ -35,26 +30,25 @@ final class EmojiAndColorsCollectionCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        addSubviews()
-        makeConstraints()
+        
+        addSubview()
+        setConstraints()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private func addSubviews() {
+    private func addSubview() {
+        
         addSubview(label)
     }
     
-    private func makeConstraints() {
+    private func setConstraints() {
+        
         NSLayoutConstraint.activate([
             label.centerXAnchor.constraint(equalTo: centerXAnchor),
             label.centerYAnchor.constraint(equalTo: centerYAnchor)
         ])
-    }
-    
-    func updateLabel(text: String) {
-        label.text = text
     }
 }

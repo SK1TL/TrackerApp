@@ -7,82 +7,87 @@
 
 import Foundation
 
-protocol TrackerCategoryStoreDelegate: AnyObject {
-    func storeDidUpdate(_ store: TrackerCategoryStore)
+protocol CategoriesViewModelDelegate: AnyObject {
+    func updateCategories()
+    func didSelectCategories(category: TrackerCategory)
 }
 
 final class CategoriesViewModel {
-    @Observable
-    private(set) var categories: [TrackerCategory]?
+    private var trackerCategoryStore = TrackerCategoryStore.shared
     
-    @Observable
-    private(set) var alertModel: AlertModel?
+    weak var delegate: CategoriesViewModelDelegate?
     
-    @Observable
-    private(set) var selectedCategoryName: String?
-    
-    private let categoryStore: TrackerCategoryStore
-    
-    init(categoryStore: TrackerCategoryStore, lastCategory: String?) {
-        self.selectedCategoryName = lastCategory
-        self.categoryStore = categoryStore
-        categories = categoryStore.categories
-    }
-    
-    func showAlertToDelete(_ category: TrackerCategory) {
-        let alertModel = AlertModel(
-            title: nil,
-            message: NSLocalizedString("alertCategory.text", comment: ""),
-            buttonText: NSLocalizedString("delete", comment: ""),
-            completion: { [weak self] _ in
-                self?.deleteCategory(category: category)
-            },
-            cancelText: NSLocalizedString("cancel", comment: ""),
-            cancelCompletion: nil
-        )
-        
-        self.alertModel = alertModel
-    }
-    
-    func selectCategory(with name: String) {
-        selectedCategoryName = name
-    }
-    
-    func addNewCategory(with label: String?) {
-        guard let label else { return }
-        do {
-            try categoryStore.makeCategory(with: label)
-            categories = categoryStore.categories
-        } catch {
-            assertionFailure()
+    private(set) var categories: [TrackerCategory] = [] {
+        didSet {
+            delegate?.updateCategories()
         }
     }
     
-    func editCategory(from existingLabel: String?, with label: String?) {
-        guard let existingLabel = existingLabel,
-              let label = label
-        else { return }
-        
-        do {
-            try categoryStore.editCategory(from: existingLabel, with: label)
-        } catch {
-            assertionFailure()
+    private(set) var selectedCategory: TrackerCategory? = nil {
+        didSet {
+            guard let selectedCategory else { return }
+            delegate?.didSelectCategories(category: selectedCategory)
         }
-        categories = categoryStore.categories
+    }
+    
+    init(selectedCategory: TrackerCategory?) {
+        self.selectedCategory = selectedCategory
+        self.trackerCategoryStore.delegate = self
+    }
+    
+    func loadCategories() {
+        categories = getCategoriesFromStore()
+    }
+    
+    func selectCategory(indexPath: IndexPath) {
+        selectedCategory = categories[indexPath.row]
     }
     
     func deleteCategory(category: TrackerCategory) {
         do {
-            try categoryStore.deleteCategory(with: category)
-            categories = categoryStore.categories
-        } catch {
-            assertionFailure()
+            try trackerCategoryStore.deleteCategory(category)
+            categories = getCategoriesFromStore()
+            if category == selectedCategory {
+                selectedCategory = nil
+            }
+        } catch {}
+    }
+    
+    func checkRewriteCategory(with label: String) {
+        if categories.contains(where: { $0.title == label }) {
+            updateCategory(with: label)
+        } else {
+            addCategory(with: label)
         }
+    }
+    
+    private func getCategoriesFromStore() -> [TrackerCategory] {
+        do {
+            let categories = try trackerCategoryStore.categoriesCoreData.map {
+                try trackerCategoryStore.getCategory(from: $0)
+            }
+            return categories
+        } catch {
+            return []
+        }
+    }
+    
+    private func addCategory(with label: String) {
+        do {
+            try trackerCategoryStore.addCategory(with: label)
+            loadCategories()
+        } catch {}
+    }
+    
+    private func updateCategory(with label: String) {
+        // TODO: - updateCategory
     }
 }
 
+// MARK: - TrackerCategoryStoreDelegate
+
 extension CategoriesViewModel: TrackerCategoryStoreDelegate {
-    func storeDidUpdate(_ store: TrackerCategoryStore) {
-        categories = categoryStore.categories
+    func didUpdate() {
+        categories = getCategoriesFromStore()
     }
 }
