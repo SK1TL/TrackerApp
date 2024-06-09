@@ -89,9 +89,9 @@ final class StatisticCell: UITableViewCell {
     }
     
     private func addSubview() {
-        contentView.addViewsTAMIC(gradientBorderView)
-        gradientBorderView.addViewsTAMIC(mainView)
-        mainView.addViewsTAMIC(stackView)
+        contentView.addViewsWithTranslatesAutoresizingMask(gradientBorderView)
+        gradientBorderView.addViewsWithTranslatesAutoresizingMask(mainView)
+        mainView.addViewsWithTranslatesAutoresizingMask(stackView)
         stackView.addArrangedSubview(valueLabel)
         stackView.addArrangedSubview(descriptionLabel)
     }

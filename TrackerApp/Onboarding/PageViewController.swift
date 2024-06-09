@@ -111,7 +111,7 @@ extension PageViewController: UIPageViewControllerDataSource {
 extension PageViewController {
     
     private func addSubviews() {
-        [pageControl, onboardingButton].forEach {view.addViewsTAMIC($0)}
+        [pageControl, onboardingButton].forEach {view.addViewsWithTranslatesAutoresizingMask($0)}
     }
     
     private func setConstraints() {

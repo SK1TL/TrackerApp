@@ -46,7 +46,7 @@ final class OnboardingViewController: UIViewController {
     }
     
     private func addSubview() {
-        [imageView, titleLabel].forEach{view.addViewsTAMIC($0)}
+        [imageView, titleLabel].forEach{view.addViewsWithTranslatesAutoresizingMask($0)}
     }
     
     private func setConstraints() {

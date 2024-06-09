@@ -152,11 +152,11 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
     
     private func addSubviews() {
         [colorView, plusButton, daysCounterLabel].forEach {
-            contentView.addViewsTAMIC($0)
+            contentView.addViewsWithTranslatesAutoresizingMask($0)
         }
         
         [trackerLabel, emojiView, pinImage].forEach {
-            colorView.addViewsTAMIC($0)
+            colorView.addViewsWithTranslatesAutoresizingMask($0)
         }
     }
     

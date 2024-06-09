@@ -52,7 +52,7 @@ final class CategoryCell: UITableViewCell {
         selectionStyle = .none
         contentView.backgroundColor = .ypBackground
         
-        [label, checkmarkImage].forEach {contentView.addViewsTAMIC($0)}
+        [label, checkmarkImage].forEach {contentView.addViewsWithTranslatesAutoresizingMask($0)}
         
         NSLayoutConstraint.activate([
             
