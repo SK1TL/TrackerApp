@@ -239,7 +239,7 @@ final class TrackersViewController: UIViewController {
         filterVC.selectedFilter = filterEnabled ?? "Трекеры на сегодня"
         filterVC.onFilterSelected = { [weak self] selectedFilter in
             self?.filterEnabled = selectedFilter
-            self?.applyFilter()
+//            self?.applyFilter()
             self?.dismiss(animated: true, completion: nil)
         }
         let navigationController = UINavigationController(rootViewController: filterVC)
@@ -255,22 +255,22 @@ final class TrackersViewController: UIViewController {
     }
     
     //MARK: - FiltersFunc
-    private func applyFilter() {
-        switch filterEnabled {
-        case "Трекеры на сегодня":
-            viewModel.filterForSelectedDate()
-        case "Завершенные":
-            viewModel.filterCompleted()
-        case "Не завершенные":
-            viewModel.filterNotCompleted()
-        case "Все трекеры":
-            viewModel.filterForAllCategories()
-        default:
-            print ("Something went wrong")
-        }
-        
-        collectionView.reloadData()
-    }
+//    private func applyFilter() {
+//        switch filterEnabled {
+//        case "Трекеры на сегодня":
+//            viewModel.filterForSelectedDate()
+//        case "Завершенные":
+//            viewModel.filterCompleted()
+//        case "Не завершенные":
+//            viewModel.filterNotCompleted()
+//        case "Все трекеры":
+//            viewModel.filterForAllCategories()
+//        default:
+//            print ("Something went wrong")
+//        }
+//        
+//        collectionView.reloadData()
+//    }
 }
 
 //MARK: - UICollectionViewDataSource
