@@ -19,7 +19,7 @@ final class TrackersViewController: UIViewController {
     private lazy var addButton: UIButton = {
         let button = UIButton()
 //        guard let addImage = UIImage(named: "Add tracker") else { return }
-        button.setImage(UIImage(systemName: "plus"), for: .normal)
+        button.setImage(UIImage(systemName: "plus")!, for: .normal)
         button.addTarget(self, action: #selector(didTapAddButton), for: .touchUpInside)
         button.tintColor = .toggleBlackWhiteColor
         return button

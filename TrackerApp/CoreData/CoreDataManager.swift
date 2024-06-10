@@ -12,7 +12,7 @@ final class CoreDataManager {
     static let shared = CoreDataManager()
     
     lazy var persistentContainer: NSPersistentContainer = {
-        let container = NSPersistentContainer(name: "Model")
+        let container = NSPersistentContainer(name: "TrackerApp")
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
             if let error = error as NSError? {
                 print(error)
