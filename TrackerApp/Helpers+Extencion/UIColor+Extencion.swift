@@ -19,17 +19,17 @@ extension UIColor {
     
     static let toggleBlackWhiteColor = UIColor { (traits: UITraitCollection) -> UIColor in
         if traits.userInterfaceStyle == .light {
-            return UIColor.black
+            return UIColor.ypBlack
         } else {
-            return UIColor.white
+            return UIColor.ypWhite
         }
     }
     
     static let blackWhiteColorCell = UIColor { (traits: UITraitCollection) -> UIColor in
         if traits.userInterfaceStyle == .light {
-            return UIColor.white
+            return UIColor.ypWhite
         } else {
-            return UIColor.black
+            return UIColor.ypBlack
         }
     }
     
@@ -37,7 +37,7 @@ extension UIColor {
         if traits.userInterfaceStyle == .light {
             return UIColor.ypGray
         } else {
-            return UIColor.black
+            return UIColor.ypBlack
         }
     }
     
@@ -45,15 +45,15 @@ extension UIColor {
         if traits.userInterfaceStyle == .light {
             return UIColor.ypWhite
         } else {
-            return UIColor.black
+            return UIColor.ypBlack
         }
     }
     
     static let blackGrayColorButton = UIColor { (traits: UITraitCollection) -> UIColor in
         if traits.userInterfaceStyle == .light {
-            return UIColor.white
+            return UIColor.ypWhite
         } else {
-            return UIColor.black
+            return UIColor.ypBlack
         }
     }
     

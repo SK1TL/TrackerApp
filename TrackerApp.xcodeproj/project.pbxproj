@@ -24,6 +24,7 @@
 		850C38DD2BD8249200DC9541 /* ScheduleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 850C38DC2BD8249200DC9541 /* ScheduleViewController.swift */; };
 		851022412C17639800947FF9 /* InlineSnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = 851022402C17639800947FF9 /* InlineSnapshotTesting */; };
 		851022432C17639800947FF9 /* SnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = 851022422C17639800947FF9 /* SnapshotTesting */; };
+		851022452C178A6200947FF9 /* TrackerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 851022442C178A6200947FF9 /* TrackerViewModel.swift */; };
 		851928DF2C161045005D4BBB /* TrackerAppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 851928DE2C161045005D4BBB /* TrackerAppTests.swift */; };
 		855875412BD8371E00E88DF3 /* HeaderCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 855875402BD8371E00E88DF3 /* HeaderCollectionView.swift */; };
 		8591170B2C107E52004864B0 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8591170D2C107E52004864B0 /* Localizable.strings */; };
@@ -90,6 +91,7 @@
 		850C38D62BD6EDCA00DC9541 /* TrackerCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCollectionViewCell.swift; sourceTree = "<group>"; };
 		850C38D82BD81E4600DC9541 /* NewTrackerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewTrackerViewController.swift; sourceTree = "<group>"; };
 		850C38DC2BD8249200DC9541 /* ScheduleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleViewController.swift; sourceTree = "<group>"; };
+		851022442C178A6200947FF9 /* TrackerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerViewModel.swift; sourceTree = "<group>"; };
 		851928DC2C161045005D4BBB /* TrackerAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TrackerAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		851928DE2C161045005D4BBB /* TrackerAppTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerAppTests.swift; sourceTree = "<group>"; };
 		855875402BD8371E00E88DF3 /* HeaderCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderCollectionView.swift; sourceTree = "<group>"; };
@@ -213,6 +215,7 @@
 				85A2033A2BF40D1D00841099 /* CategoriesViewModel.swift */,
 				859117122C10CA68004864B0 /* StatisticsCellModel.swift */,
 				859117142C10CAFF004864B0 /* StatisticViewModel.swift */,
+				851022442C178A6200947FF9 /* TrackerViewModel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -486,6 +489,7 @@
 				859117172C10CC8D004864B0 /* StatisticCell.swift in Sources */,
 				85A202912BE4260100841099 /* EmojiAndColorsCollectionCell.swift in Sources */,
 				85E763DE2C13287D00A75317 /* AnalyticsService.swift in Sources */,
+				851022452C178A6200947FF9 /* TrackerViewModel.swift in Sources */,
 				85FB0B6B2C15F473006A4EF5 /* UIFonts+Exntesions.swift in Sources */,
 				85FB0B652C15F41D006A4EF5 /* UICollectionView+Extension.swift in Sources */,
 				850C38B42BD6CCA000DC9541 /* WeekDay.swift in Sources */,

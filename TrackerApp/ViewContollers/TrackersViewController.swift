@@ -9,6 +9,30 @@ import UIKit
 
 final class TrackersViewController: UIViewController {
     
+    private let analyticsService = AnalyticsService()
+    
+    private var trackerStore: TrackerStoreProtocol
+    private let trackerCategoryStore = TrackerCategoryStore.shared
+    private let trackerRecordStore = TrackerRecordStore.shared
+    private var filterEnabled: String?
+    var viewModel: TrackerViewModel!
+    
+    private var params = UICollectionView.GeometricParams(
+        cellCount: 2,
+        leftInset: 16,
+        rightInset: 16,
+        cellSpacing: 9
+    )
+    private var searchText = "" {
+        didSet {
+            try? trackerStore.loadFilteredTrackers(date: currentDate.onlyDate(), searchString: searchText)
+        }
+    }
+    
+    private var currentDate = Date().onlyDate()
+    private var completedTrackers: Set<TrackerRecord> = []
+    private var editingTracker: Tracker?
+    
     private lazy var trackersLabel: UILabel = {
         let label = UILabel()
         label.text = NSLocalizedString("trackers", comment: "")
@@ -18,7 +42,6 @@ final class TrackersViewController: UIViewController {
     
     private lazy var addButton: UIButton = {
         let button = UIButton()
-//        guard let addImage = UIImage(named: "Add tracker") else { return }
         button.setImage(UIImage(systemName: "plus")!, for: .normal)
         button.addTarget(self, action: #selector(didTapAddButton), for: .touchUpInside)
         button.tintColor = .toggleBlackWhiteColor
@@ -82,34 +105,14 @@ final class TrackersViewController: UIViewController {
     private lazy var filterButton: UIButton = {
         let button = UIButton(type: .custom)
         button.setTitle(NSLocalizedString("filters", comment: ""), for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .regular)
-        button.titleLabel?.textColor = .white
+        button.titleLabel?.font = UIFont.ypRegular17()
+        button.titleLabel?.textColor = .ypWhite
         button.backgroundColor = .ypBlue
         button.layer.cornerRadius = 16
+        button.layer.masksToBounds = true
+        button.addTarget(self, action: #selector(didTapFilterButton), for: .touchUpInside)
         return button
     }()
-    
-    private let analyticsService = AnalyticsService()
-    
-    private var trackerStore: TrackerStoreProtocol
-    private let trackerCategoryStore = TrackerCategoryStore.shared
-    private let trackerRecordStore = TrackerRecordStore.shared
-    
-    private var params = UICollectionView.GeometricParams(
-        cellCount: 2,
-        leftInset: 16,
-        rightInset: 16,
-        cellSpacing: 9
-    )
-    private var searchText = "" {
-        didSet {
-            try? trackerStore.loadFilteredTrackers(date: currentDate.onlyDate(), searchString: searchText)
-        }
-    }
-    
-    private var currentDate = Date().onlyDate()
-    private var completedTrackers: Set<TrackerRecord> = []
-    private var editingTracker: Tracker?
     
     init(trackerStore: TrackerStoreProtocol) {
         self.trackerStore = trackerStore
@@ -232,6 +235,15 @@ final class TrackersViewController: UIViewController {
     @objc
     private func didTapFilterButton() {
         analyticsService.reportEvent(event: .click, screen: .main, item: .filter)
+        let filterVC = FilterTrackerViewController()
+        filterVC.selectedFilter = filterEnabled ?? "Трекеры на сегодня"
+        filterVC.onFilterSelected = { [weak self] selectedFilter in
+            self?.filterEnabled = selectedFilter
+            self?.applyFilter()
+            self?.dismiss(animated: true, completion: nil)
+        }
+        let navigationController = UINavigationController(rootViewController: filterVC)
+        present(navigationController, animated: true)
     }
     
     @objc
@@ -242,6 +254,23 @@ final class TrackersViewController: UIViewController {
         checkTrackers()
     }
     
+    //MARK: - FiltersFunc
+    private func applyFilter() {
+        switch filterEnabled {
+        case "Трекеры на сегодня":
+            viewModel.filterForSelectedDate()
+        case "Завершенные":
+            viewModel.filterCompleted()
+        case "Не завершенные":
+            viewModel.filterNotCompleted()
+        case "Все трекеры":
+            viewModel.filterForAllCategories()
+        default:
+            print ("Something went wrong")
+        }
+        
+        collectionView.reloadData()
+    }
 }
 
 //MARK: - UICollectionViewDataSource
@@ -476,10 +505,8 @@ extension TrackersViewController: TrackerRecordStoreDelegate {
 // MARK: - Set constraints / Add subviews
 
 extension TrackersViewController {
-    
     private func addSubviews() {
         view.backgroundColor = .ypWhite
-        
         [trackersLabel,addButton,
          datePicker,searchTextField,
          collectionView,emptyTrackersLabel,
@@ -487,7 +514,6 @@ extension TrackersViewController {
     }
     
     private func setConstraints() {
-        
         NSLayoutConstraint.activate([
             addButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 57),
             addButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 18),

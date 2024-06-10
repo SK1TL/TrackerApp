@@ -511,7 +511,6 @@ extension NewTrackerViewController: UICollectionViewDelegateFlowLayout {
         return params.cellSpacing
     }
     
-    
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
                         minimumInteritemSpacingForSectionAt section: Int

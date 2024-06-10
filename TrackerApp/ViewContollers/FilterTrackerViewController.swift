@@ -14,6 +14,7 @@ final class FilterTrackerViewController: UIViewController {
     var selectedFilter: String = "Трекеры на сегодня"
     var onFilterSelected: ((String) -> Void)?
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupTableView()
@@ -24,11 +25,11 @@ final class FilterTrackerViewController: UIViewController {
     
     private func setupTableView() {
         tableView = UITableView(frame: .zero, style: .plain)
-        tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.delegate = self
         tableView.dataSource = self
         tableView.isScrollEnabled = false
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        tableView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(tableView)
     }
     
@@ -57,8 +58,8 @@ extension FilterTrackerViewController: UITableViewDelegate, UITableViewDataSourc
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         cell.textLabel?.text = filters[indexPath.row]
         cell.accessoryType = selectedFilter == filters[indexPath.row] ? .checkmark : .none
-        cell.backgroundColor = UIColor(named: "GrayForTableViews")?.withAlphaComponent(0.3)
-        cell.textLabel?.font = UIFont.systemFont(ofSize: 17, weight: .regular)
+        cell.backgroundColor = .ypGray.withAlphaComponent(0.3)
+        cell.textLabel?.font = UIFont.ypRegular17()
         return cell
     }
     

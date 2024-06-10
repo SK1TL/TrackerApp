@@ -15,3 +15,7 @@ struct Identifier {
     static let idCategoryCell = "CategoryCell"
     static let idStatisticCell = "StatisticCell"
 }
+
+struct ApiKeyForMetrica {
+    static let metricaAPI = "3ea9f24f-52cc-4510-b582-88ec8cdf5d5f"
+}
