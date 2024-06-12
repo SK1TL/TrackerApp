@@ -14,7 +14,7 @@ final class TrackersViewController: UIViewController {
     private var trackerStore: TrackerStoreProtocol
     private let trackerCategoryStore = TrackerCategoryStore.shared
     private let trackerRecordStore = TrackerRecordStore.shared
-    private var filterEnabled: String?
+    private var filterEnabled: FilterType?
     var viewModel: TrackerViewModel!
     
     private var params = UICollectionView.GeometricParams(
@@ -200,12 +200,16 @@ final class TrackersViewController: UIViewController {
     
     private func deleteTracker(forIndexPath: IndexPath) {
         guard let tracker = trackerStore.tracker(at: forIndexPath) else { return }
-        let alert = UIAlertController(title: nil,
-                                      message: NSLocalizedString("alertTracker.text", comment: ""),
-                                      preferredStyle: .actionSheet
+        let alert = UIAlertController(
+            title: nil,
+            message: NSLocalizedString("alertTracker.text", comment: ""),
+            preferredStyle: .actionSheet
         )
         let cancelAction = UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel)
-        let deleteAction = UIAlertAction(title: NSLocalizedString("delete", comment: ""), style: .destructive) { [weak self] _ in
+        let deleteAction = UIAlertAction(
+            title: NSLocalizedString("delete", comment: ""),
+            style: .destructive
+        ) { [weak self] _ in
             guard let self else { return }
             try? self.trackerStore.deleteTracker(tracker)
             loadTrackers()
@@ -236,10 +240,10 @@ final class TrackersViewController: UIViewController {
     private func didTapFilterButton() {
         analyticsService.reportEvent(event: .click, screen: .main, item: .filter)
         let filterVC = FilterTrackerViewController()
-        filterVC.selectedFilter = filterEnabled ?? "Трекеры на сегодня"
+        filterVC.selectedFilter = filterEnabled ?? .trackersOnToday
         filterVC.onFilterSelected = { [weak self] selectedFilter in
             self?.filterEnabled = selectedFilter
-//            self?.applyFilter()
+            self?.applyFilter()
             self?.dismiss(animated: true, completion: nil)
         }
         let navigationController = UINavigationController(rootViewController: filterVC)
@@ -255,22 +259,27 @@ final class TrackersViewController: UIViewController {
     }
     
     //MARK: - FiltersFunc
-//    private func applyFilter() {
-//        switch filterEnabled {
-//        case "Трекеры на сегодня":
+    private func applyFilter() {
+        switch filterEnabled {
+        case .trackersOnToday:
+            print("где трекеры?")
 //            viewModel.filterForSelectedDate()
-//        case "Завершенные":
-//            viewModel.filterCompleted()
-//        case "Не завершенные":
-//            viewModel.filterNotCompleted()
-//        case "Все трекеры":
+        case .completed:
+            try? trackerRecordStore.loadCompletedTrackers(by: currentDate.onlyDate())
+            collectionView.reloadData()
+
+        case .uncompleted:
+            let trackers = try? trackerStore.loadFilteredTrackers(date: currentDate.onlyDate(), searchString: "")
+            collectionView.reloadData()
+
+        case .allTrackers:
+            loadTrackers()
 //            viewModel.filterForAllCategories()
-//        default:
-//            print ("Something went wrong")
-//        }
-//        
-//        collectionView.reloadData()
-//    }
+        case .none:
+            print("error")
+        }
+        collectionView.reloadData()
+    }
 }
 
 //MARK: - UICollectionViewDataSource

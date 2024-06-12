@@ -7,20 +7,40 @@
 
 import UIKit
 
+enum FilterType: CaseIterable {
+    case allTrackers
+    case trackersOnToday
+    case completed
+    case uncompleted
+
+    var title: String {
+        switch self {
+        case .allTrackers:
+            return "Все трекеры"
+        case .trackersOnToday:
+            return "Трекеры на сегодня"
+        case .completed:
+            return "Завершенные"
+        case .uncompleted:
+            return "Не завершенные"
+        }
+    }
+}
+
 final class FilterTrackerViewController: UIViewController {
     var tableView: UITableView!
     
-    let filters = ["Все трекеры", "Трекеры на сегодня", "Завершенные", "Не завершенные"]
-    var selectedFilter: String = "Трекеры на сегодня"
-    var onFilterSelected: ((String) -> Void)?
-    
+    let filters = FilterType.allCases// ["Все трекеры", "Трекеры на сегодня", "Завершенные", "Не завершенные"]
+    var selectedFilter: FilterType = .trackersOnToday
+    var onFilterSelected: ((FilterType) -> Void)?
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupTableView()
         configureConstraints()
         configureNavBar()
-        view.backgroundColor = .white
+        view.backgroundColor = UIColor.blackWhiteColorCell
     }
     
     private func setupTableView() {
@@ -44,8 +64,8 @@ final class FilterTrackerViewController: UIViewController {
     }
     
     private func configureNavBar(){
-        navigationItem.title = "Фильтры"
-        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
+        navigationItem.title = NSLocalizedString("filters", comment: "")
+        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.toggleBlackWhiteColor]
     }
 }
 
@@ -56,7 +76,7 @@ extension FilterTrackerViewController: UITableViewDelegate, UITableViewDataSourc
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        cell.textLabel?.text = filters[indexPath.row]
+        cell.textLabel?.text = filters[indexPath.row].title
         cell.accessoryType = selectedFilter == filters[indexPath.row] ? .checkmark : .none
         cell.backgroundColor = .ypGray.withAlphaComponent(0.3)
         cell.textLabel?.font = UIFont.ypRegular17()
@@ -89,3 +109,4 @@ extension FilterTrackerViewController: UITableViewDelegate, UITableViewDataSourc
         dismiss(animated: true, completion: nil)
     }
 }
+
