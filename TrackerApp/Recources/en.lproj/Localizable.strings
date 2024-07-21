@@ -168,3 +168,11 @@
 "fr" = "Fr";
 "sa" = "Sa";
 "su" = "Su";
+
+
+"Trackers" = "Trackers";
+"Filters" = "Filters";
+"Statistics" = "Statistics";
+"day" = "day";
+"days_few" = "days";
+"days_many" = "days";

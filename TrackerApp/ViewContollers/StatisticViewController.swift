@@ -8,163 +8,96 @@
 import UIKit
 
 final class StatisticViewController: UIViewController {
+    private var trackers: [Tracker] = []
+    private var completedTrackers: Set<TrackerRecord> = []
+    private let trackerRecordStore = TrackerRecordStore()
+    private let statView = CustomStatisticView(title: "0", subtitle: "Трекеров завершено")
     
-    private var viewModel: StatisticsViewModel
-    
-    private lazy var titleLabel: UILabel = {
+    private let placeholderLabel: UILabel = {
         let label = UILabel()
-        label.text = NSLocalizedString("statistics", comment: "")
-        label.font = UIFont.ypBold34()
-        label.textColor = .toggleBlackWhiteColor
+        label.text = "Анализировать пока нечего"
+        label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
+        label.textAlignment = .center
         return label
     }()
     
-    private lazy var emptyStatisticsImageView: UIImageView = {
+    private let placeholderImageView: UIImageView = {
         let image = UIImageView()
-        image.image = UIImage(named: "crySmile")!
+        image.image = UIImage(named: "statisticHolder")
         return image
     }()
     
-    private lazy var emptyStatisticsLabel: UILabel = {
-        let label = UILabel()
-        label.text = NSLocalizedString("emptyStatistics.text", comment: "")
-        label.font = UIFont.ypMedium12()
-        return label
-    }()
-    
-    private lazy var tableView: UITableView = {
-        let tableView = UITableView()
-        tableView.register(
-            StatisticCell.self,
-            forCellReuseIdentifier: StatisticCell.identifier
-        )
-        tableView.allowsSelection = false
-        tableView.separatorStyle = .none
-        tableView.isScrollEnabled = false
-        tableView.backgroundColor = .clear
-        return tableView
-    }()
-    
-    init(viewModel: StatisticsViewModel) {
-        self.viewModel = viewModel
-        super.init(nibName: nil, bundle: nil)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    // MARK: - Lifecycle
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        addSubviews()
-        setConstraints()
-        bindingViewModel()
-        
-        tableView.dataSource = self
-        tableView.delegate = self
-
+        trackerRecordStore.delegate = self
+        setupUI()
+        setupNavigationBar()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        viewModel.startObserve()
+        updateStatistic()
     }
     
-    // MARK: - Private func
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        statView.frame = CGRect(x: 16, y: self.view.frame.midY - 45, width: self.view.frame.width - 32, height: 90)
+    }
     
-    private func bindingViewModel() {
-        viewModel.$isEmptyPlaceholderHidden.bind { [weak self] isEmptyPlaceholderHidden in
-            self?.toggleStatisticsPlaceholder(show: isEmptyPlaceholderHidden)
+    private func setupUI() {
+        view.backgroundColor = .white
+        
+        [placeholderImageView, placeholderLabel, statView].forEach{
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            view.addSubview($0)
         }
         
-        viewModel.$bestPeriod.bind { [weak self] newValue in
-            self?.updateCellModel(for: .bestPeriod, value: newValue)
-        }
-        viewModel.$perfectDays.bind { [weak self] newValue in
-            self?.updateCellModel(for: .perfectDays, value: newValue)
-        }
-        viewModel.$complitedTrackers.bind { [weak self] newValue in
-            self?.updateCellModel(for: .complitedTrackers, value: newValue)
-        }
-        viewModel.$mediumValue.bind { [weak self] newValue in
-            self?.updateCellModel(for: .mediumValue, value: newValue)
-        }
-    }
-    
-    private func updateCellModel(for statisticsCase: StatisticsCases, value: Int) {
-        let cellModel = StatisticsCellModel(value: String(value), description: statisticsCase.description)
-        
-        if let index = viewModel.cellModels.firstIndex(where: { $0.description == statisticsCase.description }) {
-            viewModel.cellModels[index] = cellModel
-        } else {
-            viewModel.cellModels.append(cellModel)
-        }
-        tableView.reloadData()
-    }
-    
-    private func toggleStatisticsPlaceholder(show: Bool) {
-        emptyStatisticsImageView.isHidden = show
-        emptyStatisticsLabel.isHidden = show
-        tableView.isHidden = !show
-    }
-}
-
-//MARK: - UITableViewDataSource, UITableViewDelegate
-
-extension StatisticViewController: UITableViewDataSource {
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        StatisticsCases.allCases.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: StatisticCell.identifier, for: indexPath) as? StatisticCell else { return UITableViewCell() }
-        
-        let cellModel = viewModel.cellModels[indexPath.row]
-        cell.configureCell(with: cellModel)
-        
-        return cell
-    }
-}
-
-//MARK: - UITableViewDelegate
-
-extension StatisticViewController: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        102
-    }
-}
-
-// MARK: - Set constraints / Add subviews
-
-extension StatisticViewController {
-    
-    private func addSubviews() {
-        view.backgroundColor = .ypWhite
-        
-        [titleLabel, emptyStatisticsLabel,
-         emptyStatisticsImageView, tableView].forEach { view.addViewsWithTranslatesAutoresizingMask($0) }
-    }
-    
-    private func setConstraints() {
+        statView.frame = CGRect(x: 16, y: self.view.frame.midY, width: self.view.frame.width - 32, height: 90)
+        statView.setupUI()
         
         NSLayoutConstraint.activate([
-            titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            titleLabel.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 52),
+            statView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            statView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            statView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            statView.heightAnchor.constraint(equalToConstant: 90),
             
-            emptyStatisticsImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            emptyStatisticsImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            placeholderImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            placeholderImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            placeholderImageView.widthAnchor.constraint(equalToConstant: 80),
+            placeholderImageView.heightAnchor.constraint(equalToConstant: 80),
             
-            emptyStatisticsLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            emptyStatisticsLabel.topAnchor.constraint(equalTo: emptyStatisticsImageView.bottomAnchor, constant: 8),
-            
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            tableView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 77),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            tableView.heightAnchor.constraint(equalToConstant: 408)
+            placeholderLabel.topAnchor.constraint(equalTo: placeholderImageView.bottomAnchor, constant: 10),
+            placeholderLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
+    }
+    
+    private func setupNavigationBar() {
+        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationItem.title = "Статистика"
+    }
+    
+    private func updateUI() {
+        if completedTrackers.isEmpty {
+            placeholderImageView.isHidden = false
+            placeholderLabel.isHidden = false
+            statView.isHidden = true
+        } else {
+            placeholderImageView.isHidden = true
+            placeholderLabel.isHidden = true
+            statView.isHidden = false
+        }
+    }
+    
+    private func updateStatistic() {
+        completedTrackers = trackerRecordStore.completedTrackers
+        let quantity = completedTrackers.count
+        statView.configValue(value: quantity)
+        updateUI()
+    }
+}
+
+extension StatisticViewController: TrackerRecordStoreDelegate {
+    func didUpdateRecords() {
+        updateStatistic()
     }
 }

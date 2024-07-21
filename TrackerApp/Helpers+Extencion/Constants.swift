@@ -6,16 +6,29 @@
 //
 
 import Foundation
+import UIKit
 
-struct Identifier {
-    static let idTrackCell = "TrackerCollectionViewCell"
-    static let idHeader = "HeaderCollectionView"
-    static let idEmojiAndColorsCell = "EmojiAndColorsCollectionCell"
-    static let idSupple = "Header"
-    static let idCategoryCell = "CategoryCell"
-    static let idStatisticCell = "StatisticCell"
+enum Constant {
+    static let emojies: [String] = [
+    "🏝️", "🥰", "🤩", "🥳", "✈️", "💯",
+    "😈", "😻", "❤️", "👀", "💃", "👨‍👩‍👧‍👦",
+    "🐶", "🪴", "🍎", "🥑", "🍷", "🛼",
+    ]
+    
+    //ScheduleViewController
+    static let scheduleTableViewTitles = [
+        "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"
+    ]
+    
+    static let colorSelection = (1...18).map({ UIColor(named: String($0)) })
+    
+    static let collectionViewTitles = ["Emoji", "Цвет"]
+    
+    static let metricaAPI = "3ea9f24f-52cc-4510-b582-88ec8cdf5d5f"
 }
 
-struct ApiKeyForMetrica {
-    static let metricaAPI = "3ea9f24f-52cc-4510-b582-88ec8cdf5d5f"
+extension Constant {
+    static func randomEmoji() -> String {
+        return emojies.randomElement() ?? "❤️"
+    }
 }

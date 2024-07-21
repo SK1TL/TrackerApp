@@ -9,92 +9,108 @@ import UIKit
 import CoreData
 
 protocol TrackerRecordStoreDelegate: AnyObject {
-    func didUpdateRecords(_ records: Set<TrackerRecord>)
+    func didUpdateRecords()
 }
 
 final class TrackerRecordStore: NSObject {
-    
-    static let shared = TrackerRecordStore()
-    weak var delegate: TrackerRecordStoreDelegate?
-    
     private let context: NSManagedObjectContext
-    private let trackerStore = TrackerStore.shared
-    private var completedTrackers: Set<TrackerRecord> = []
+    public weak var delegate: TrackerRecordStoreDelegate?
     
-    // MARK: - Lifecycle
+    private var fetchedResultsController: NSFetchedResultsController<TrackerRecordCoreData>?
     
     convenience override init() {
-        let context = CoreDataManager.shared.persistentContainer.viewContext
-        self.init(context: context)
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
+            preconditionFailure("couldn't get app delegate")
+        }
+        let context = appDelegate.persistentContainer.viewContext
+        do {
+            try self.init(context: context)
+        } catch {
+            preconditionFailure("Failed to initialize TrackerRecordStore: \(error)")
+        }
     }
     
-    init(context: NSManagedObjectContext) {
+    init(context: NSManagedObjectContext) throws {
         self.context = context
         super.init()
-    }
-
-    // MARK: - Methods
-    
-    func add(_ newRecord: TrackerRecord) throws {
-        let trackerCoreData = try trackerStore.getTrackerCoreData(by: newRecord.trackerId)
-        let trackerRecordCoreData = TrackerRecordCoreData(context: context)
-        trackerRecordCoreData.recordId = newRecord.id
-        trackerRecordCoreData.recordDate = newRecord.date
-        trackerRecordCoreData.tracker = trackerCoreData
-        try context.save()
-        completedTrackers.insert(newRecord)
-        delegate?.didUpdateRecords(completedTrackers)
-    }
-    
-    func remove(_ record: TrackerRecord) throws {
-        let request = NSFetchRequest<TrackerRecordCoreData>(entityName: "TrackerRecordCoreData")
-        request.predicate = NSPredicate(
-            format: "%K == %@",
-            #keyPath(TrackerRecordCoreData.recordId), record.id.uuidString
+        
+        let fetchRequest = TrackerRecordCoreData.fetchRequest()
+        fetchRequest.sortDescriptors = [
+            NSSortDescriptor(keyPath: \TrackerRecordCoreData.trackerID, ascending: true)
+        ]
+        let controller = NSFetchedResultsController(
+            fetchRequest: fetchRequest,
+            managedObjectContext: context,
+            sectionNameKeyPath: nil,
+            cacheName: nil
         )
-        let records = try context.fetch(request)
-        guard let recordToRemove = records.first else { return }
-        context.delete(recordToRemove)
-        try context.save()
-        completedTrackers.remove(record)
-        delegate?.didUpdateRecords(completedTrackers)
+        controller.delegate = self
+        self.fetchedResultsController = controller
+        try controller.performFetch()
     }
     
-    func loadCompletedTrackers() throws -> [TrackerRecord] {
-        let request = NSFetchRequest<TrackerRecordCoreData>(entityName: "TrackerRecordCoreData")
-        let recordsCoreData = try context.fetch(request)
-        let records = try recordsCoreData.map { try makeTrackerRecord(from: $0) }
-        return records
-    }
-    
-    func loadCompletedTrackers(by date: Date) throws {
-        let request = NSFetchRequest<TrackerRecordCoreData>(entityName: "TrackerRecordCoreData")
-        request.returnsObjectsAsFaults = false
-        request.predicate = NSPredicate(format: "%K == %@", #keyPath(TrackerRecordCoreData.recordDate), date as NSDate)
-        let recordsCoreData = try context.fetch(request)
-        let records = try recordsCoreData.map { try makeTrackerRecord(from: $0) }
-        completedTrackers = Set(records)
-        delegate?.didUpdateRecords(completedTrackers)
-    }
-    
-    private func makeTrackerRecord(from coreData: TrackerRecordCoreData) throws -> TrackerRecord {
+    var completedTrackers: Set<TrackerRecord> {
         guard
-            let id = coreData.recordId,
-            let date = coreData.recordDate,
-            let trackerCoreData = coreData.tracker,
-            let tracker = try? trackerStore.getTracker(from: trackerCoreData)
-        else { throw StoreError.getRecordError}
-        return TrackerRecord(id: id, trackerId: tracker.id, date: date)
+            let objects = fetchedResultsController?.fetchedObjects,
+            let completedTrackers = try? objects.map({ try completedTracker(from: $0)})
+        else { return [] }
+        return Set(completedTrackers)
     }
     
-    func fetchAllRecords() throws -> [TrackerRecordCoreData] {
-        let request = NSFetchRequest<TrackerRecordCoreData>(entityName: "TrackerRecordCoreData")
-        request.returnsObjectsAsFaults = false
+    private func completedTracker(from data: TrackerRecordCoreData) throws -> TrackerRecord {
+        guard
+            let id = data.trackerID,
+            let date = data.date
+        else {
+            throw StoreError.decodeError
+        }
+        return TrackerRecord(trackerID: id, date: date)
+    }
+    
+    func addNewRecord(from trackerRecord: TrackerRecord) throws {
+        guard let entity = NSEntityDescription.entity(forEntityName: "TrackerRecordCoreData", in: context) else { return }
+        let newRecord = TrackerRecordCoreData(entity: entity, insertInto: context)
+        newRecord.trackerID = trackerRecord.trackerID
+        newRecord.date = trackerRecord.date
         do {
-            let recordsCoreData = try context.fetch(request)
-            return recordsCoreData
+            try context.save()
         } catch {
-            throw error
+            throw StoreError.decodeError
+        }
+    }
+    
+    func deleteTrackerRecord(trackerRecord: TrackerRecord) throws {
+        guard let record = fetchedResultsController?.fetchedObjects?.first(where: {
+            $0.trackerID == trackerRecord.trackerID && $0.date == trackerRecord.date
+        }) else { return }
+        context.delete(record)
+        do {
+            try context.save()
+        } catch {
+            throw StoreError.decodeError
+        }
+    }
+  
+    func fetchRecords() throws -> Set<TrackerRecord> {
+        let fetchRequest = NSFetchRequest<TrackerRecordCoreData>(entityName: "TrackerRecordCoreData")
+        do {
+            let trackerRecordCoreDataArray = try context.fetch(fetchRequest)
+            let trackerRecords = trackerRecordCoreDataArray.map { trackerRecordCoreData in
+                return TrackerRecord(
+                    trackerID: trackerRecordCoreData.trackerID ?? UUID(),
+                    date: trackerRecordCoreData.date ?? Date()
+                )
+            }
+            return Set(trackerRecords)
+        } catch {
+            throw StoreError.decodeError
         }
     }
 }
+
+extension TrackerRecordStore: NSFetchedResultsControllerDelegate {
+    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        delegate?.didUpdateRecords()
+    }
+}
+

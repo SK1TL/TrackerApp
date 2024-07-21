@@ -5,41 +5,41 @@
 //  Created by Артур Гайфуллин on 02.05.2024.
 //
 
+import Foundation
 import UIKit
 
 final class SupplementaryView: UICollectionReusableView {
+    static let reuseIdentifier = "SupplementaryViewHeader"
     
-    static let identifier = Identifier.idSupple
-    
-    lazy var headerLabel: UILabel = {
+    private let titleLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.ypBold19()
-        label.textColor = .toggleBlackWhiteColor
-        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont.systemFont(ofSize: 19, weight: .bold)
+        label.tintColor = .black
         return label
     }()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
-        addSubview()
-        setConstraints()
+        setupTitleLable()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private func addSubview() {
-        addSubview(headerLabel)
-    }
-    
-    private func setConstraints() {
+    private func setupTitleLable() {
+        addSubview(titleLabel)
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            headerLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 28),
-            headerLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
-            headerLabel.bottomAnchor.constraint(equalTo: bottomAnchor)
+            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
+            titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor),
+            titleLabel.heightAnchor.constraint(equalToConstant: 30)
         ])
     }
+    
+    func setTitle(_ title: String) {
+        titleLabel.text = title
+    }
+  
 }

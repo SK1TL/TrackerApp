@@ -8,187 +8,250 @@
 import UIKit
 
 protocol TrackerCollectionViewCellDelegate: AnyObject {
-    func didTapDoneButton(of cell: TrackerCollectionViewCell, with tracker: Tracker)
+    func record(_ sender: Bool, _ cell: TrackerCollectionViewCell)
+    func completeTracker(id: UUID, at indexPath: IndexPath)
+    func uncompleteTracker(id: UUID, at indexPath: IndexPath)
+    func pinTracker(at indexPath: IndexPath)
+    func unpinTracker(at indexPath: IndexPath)
+    func editTracker(at indexPath: IndexPath)
+    func deleteTracker(at indexPath: IndexPath)
+    func isTrackerPinned(at indexPath: IndexPath) -> Bool
 }
 
 final class TrackerCollectionViewCell: UICollectionViewCell {
     
-    static let identifier = Identifier.idTrackCell
+    static let reuseIdentifier = "TrackerCell"
     weak var delegate: TrackerCollectionViewCellDelegate?
-    private var tracker: Tracker?
     
-    private lazy var colorView: UIView = {
+    private var quantity: Int = 0
+    private var trackerIsCompleted: Bool = false
+    private var trackerId: UUID?
+    private var indexPath: IndexPath?
+    
+    private let colorView: UIView = {
         let view = UIView()
-        view.layer.masksToBounds = true
         view.layer.cornerRadius = 16
         return view
     }()
     
-    private let trackerLabel: UILabel = {
+    let nameLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.ypMedium12()
-        label.textAlignment = .left
-        label.numberOfLines = 0
+        label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
         label.textColor = .white
+        label.numberOfLines = 2
+        label.lineBreakMode = .byWordWrapping
         return label
     }()
     
-    private let emojiView: UILabel = {
+    private let emojiImageView: UILabel = {
         let label = UILabel()
-        label.backgroundColor = UIColor(red: 1, green: 1, blue: 1, alpha: 0.3)
-        label.layer.masksToBounds = true
-        label.layer.cornerRadius = 12
-        label.font = UIFont.systemFont(ofSize: 12)
+        label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
         label.textAlignment = .center
+        label.backgroundColor = .white.withAlphaComponent(0.3)
+        label.layer.cornerRadius = 12
+        label.layer.masksToBounds = true
         return label
     }()
     
-    private let daysCounterLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.ypMedium12()
-        label.textColor = .toggleBlackWhiteColor
-        return label
-    }()
-    
-    private lazy var plusButton: UIButton = {
+    private let quantityButton: UIButton = {
         let button = UIButton()
-        button.setImage(UIImage(systemName: "plus"), for: .normal)
-        button.backgroundColor = colorView.backgroundColor
-        button.layer.masksToBounds = true
         button.layer.cornerRadius = 17
-        button.tintColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1)
-        button.addTarget(self, action: #selector(plusButtonTapped), for: .touchUpInside)
+        button.tintColor = .white
+        button.addTarget(
+            TrackerCollectionViewCell.self,
+            action: #selector(quantityButtonTapped),
+            for: .touchUpInside
+        )
         return button
     }()
     
-    private let pinImage: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = UIImage(systemName: "pin.fill")
-        imageView.tintColor = .white
-        imageView.isHidden = true
-        return imageView
+    private let quantityLabel: UILabel = {
+        let label = UILabel()
+        label.text = "1 день"
+        label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
+        label.textColor = .ypBlack
+        return label
     }()
-    
-    private var days = 0 {
-        didSet {
-            let numberFormatter = NumberFormatter()
-            numberFormatter.numberStyle = .currency
-            numberFormatter.locale = Locale.current
-            daysCounterLabel.text = String.localizedStringWithFormat(
-                NSLocalizedString("numberOfDays", comment: "Number of checked days"),
-                days
-            )
-        }
-    }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
-        addSubviews()
-        setConstraints()
+        setupUI()
+        let interaction = UIContextMenuInteraction(delegate: self)
+        colorView.addInteraction(interaction)
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configCell(with tracker: Tracker, days: Int, isDone: Bool, interaction: UIInteraction) {
-        self.tracker = tracker
-        self.days = tracker.completedDaysCount
+    func configure(
+        with tracker: Tracker,
+        trackerIsCompleted: Bool,
+        completedDays: Int,
+        indexPath: IndexPath
+    ) {
+        self.trackerIsCompleted = trackerIsCompleted
+        self.trackerId = tracker.id
+        self.indexPath = indexPath
+        
+        nameLabel.text = tracker.name
         colorView.backgroundColor = tracker.color
-        plusButton.backgroundColor = tracker.color
-        trackerLabel.text = tracker.text
-        emojiView.text = tracker.emoji
-        toggleDoneButton(isDone)
-        colorView.addInteraction(interaction)
-        changePin(for: tracker)
-    }
-    
-    func toggleDoneButton(_ isDone: Bool) {
-        if isDone {
-            plusButton.setImage(UIImage(systemName: "checkmark"), for: .normal)
-            plusButton.layer.opacity = 0.3
-            plusButton.tintColor = .blackWhiteColorCell
-        } else {
-            plusButton.setImage(UIImage(systemName: "plus"), for: .normal)
-            plusButton.layer.opacity = 1
-            plusButton.tintColor = .blackWhiteColorCell
-        }
-    }
-    
-    private func changePin(for tracker: Tracker) {
-        pinImage.isHidden = !tracker.isPinned
-    }
-    
-    func increaseCount() {
-        days += 1
-    }
-    
-    func decreaseCount() {
-        days -= 1
-    }
-    
-    private func formatDayString(for days: Int) -> String {
-        let mod10 = days % 10
-        let mod100 = days % 100
+        quantityButton.backgroundColor = tracker.color
+        emojiImageView.text = tracker.emoji
         
-        if mod100 >= 11 && mod100 <= 19 {
-            return "\(days) дней"
-        } else if mod10 == 1 {
-            return "\(days) день"
-        } else if mod10 >= 2 && mod10 <= 4 {
-            return "\(days) дня"
-        } else {
-            return "\(days) дней"
-        }
-    }
-    
-    @objc
-    private func plusButtonTapped() {
-        guard let tracker else { return }
-        delegate?.didTapDoneButton(of: self, with: tracker)
-    }
-    
-    
-    private func addSubviews() {
-        [colorView, plusButton, daysCounterLabel].forEach {
-            contentView.addViewsWithTranslatesAutoresizingMask($0)
+        let imageName = trackerIsCompleted ? "checkmark" : "plus"
+        if let image = UIImage(systemName: imageName) {
+            quantityButton.setImage(image, for: .normal)
         }
         
-        [trackerLabel, emojiView, pinImage].forEach {
-            colorView.addViewsWithTranslatesAutoresizingMask($0)
+        quantityLabel.text = setQuantityLabelText(completedDays)
+        setupQuantityButton(with: tracker)
+    }
+   
+    @objc private func quantityButtonTapped() {
+        guard let trackerId = trackerId, let indexPath = indexPath else {
+            assertionFailure("no trackerId and indexPath")
+            return
+        }
+        
+//        quantityButton.isEnabled = false
+//
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            if trackerIsCompleted {
+                self.delegate?.uncompleteTracker(id: trackerId, at: indexPath)
+            } else {
+                self.delegate?.completeTracker(id: trackerId, at: indexPath)
+            }
+//            self.quantityButton.isEnabled = true
+//        }
+    }
+    
+    private func setupQuantityButton(with tracker: Tracker) {
+        switch quantityButton.currentImage {
+        case UIImage(systemName: "plus"):
+            colorView.backgroundColor = tracker.color
+        case UIImage(systemName: "checkmark"):
+            quantityButton.backgroundColor = tracker.color.withAlphaComponent(0.3)
+        case .none:
+            break
+        case .some(_):
+            break
+        }
+        _ = UIImage(systemName: "checkmark")
+        _ = UIImage(systemName: "plus")
+    }
+    
+    private func setQuantityLabelText(_ count: Int) -> String {
+        let language = Locale.current.languageCode
+        
+        if language == "ru" {
+            // Логика для русского языка
+            let daysForms = [
+                NSLocalizedString("days_many", comment: "Plural form for days"),
+                NSLocalizedString("day", comment: "Singular form for day"),
+                NSLocalizedString("days_few", comment: "Few form for days")
+            ]
+
+            let remainder100 = count % 100
+            let remainder10 = count % 10
+            var formIndex: Int
+            
+            switch remainder100 {
+            case 11...14:
+                formIndex = 0
+            default:
+                switch remainder10 {
+                case 1:
+                    formIndex = 1
+                case 2...4:
+                    formIndex = 2
+                default:
+                    formIndex = 0
+                }
+            }
+            
+            return "\(count) \(daysForms[formIndex])"
+        } else {
+            // Логика для английского языка
+            let dayString = count == 1 ? NSLocalizedString("day", comment: "Singular form for day") : NSLocalizedString("days_few", comment: "Plural form for days")
+            return "\(count) \(dayString)"
         }
     }
     
-    private func setConstraints() {
+    private func setupUI() {
+        contentView.backgroundColor = .clear
+        
+        [colorView, quantityButton, quantityLabel].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            contentView.addSubview($0)
+        }
+        
+        [emojiImageView, nameLabel].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
+        colorView.addSubview(emojiImageView)
+        colorView.addSubview(nameLabel)
         
         NSLayoutConstraint.activate([
-            colorView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             colorView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            colorView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             colorView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             colorView.heightAnchor.constraint(equalToConstant: 90),
             
-            trackerLabel.leadingAnchor.constraint(equalTo: colorView.leadingAnchor, constant: 12),
-            trackerLabel.trailingAnchor.constraint(equalTo: colorView.trailingAnchor, constant: -12),
-            trackerLabel.bottomAnchor.constraint(equalTo: colorView.bottomAnchor, constant: -12),
+            emojiImageView.topAnchor.constraint(equalTo: colorView.topAnchor, constant: 12),
+            emojiImageView.leadingAnchor.constraint(equalTo: colorView.leadingAnchor, constant: 12),
+            emojiImageView.heightAnchor.constraint(equalToConstant: 24),
+            emojiImageView.widthAnchor.constraint(equalToConstant: 24),
             
-            emojiView.topAnchor.constraint(equalTo: colorView.topAnchor, constant: 12),
-            emojiView.leadingAnchor.constraint(equalTo: colorView.leadingAnchor, constant: 12),
-            emojiView.heightAnchor.constraint(equalToConstant: 24),
-            emojiView.widthAnchor.constraint(equalToConstant: 24),
+            nameLabel.bottomAnchor.constraint(equalTo: colorView.bottomAnchor, constant: -12),
+            nameLabel.leadingAnchor.constraint(equalTo: colorView.leadingAnchor, constant: 12),
+            nameLabel.trailingAnchor.constraint(equalTo: colorView.trailingAnchor, constant: -12),
             
-            plusButton.topAnchor.constraint(equalTo: colorView.bottomAnchor, constant: 8),
-            plusButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12),
-            plusButton.heightAnchor.constraint(equalToConstant: 34),
-            plusButton.widthAnchor.constraint(equalToConstant: 34),
+            quantityButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16),
+            quantityButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12),
+            quantityButton.heightAnchor.constraint(equalToConstant: 34),
+            quantityButton.widthAnchor.constraint(equalToConstant: 34),
             
-            daysCounterLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
-            daysCounterLabel.centerYAnchor.constraint(equalTo: plusButton.centerYAnchor),
-            
-            pinImage.topAnchor.constraint(equalTo: colorView.topAnchor, constant: 18),
-            pinImage.trailingAnchor.constraint(equalTo: colorView.trailingAnchor, constant: -12),
-            pinImage.heightAnchor.constraint(equalToConstant: 12),
-            pinImage.widthAnchor.constraint(equalToConstant: 8)
+            quantityLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
+            quantityLabel.trailingAnchor.constraint(equalTo: quantityButton.leadingAnchor, constant: -8),
+            quantityLabel.centerYAnchor.constraint(equalTo: quantityButton.centerYAnchor)
         ])
     }
 }
+
+extension TrackerCollectionViewCell: UIContextMenuInteractionDelegate {
+    func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
+        guard let indexPath = indexPath else { return nil }
+        
+        let configContextMenu = UIContextMenuConfiguration(actionProvider: { _ in
+            let isPinned = self.delegate?.isTrackerPinned(at: indexPath) ?? false
+            let pinTitle = isPinned ? "Открепить" : "Закрепить"
+            
+            let pinAction = UIAction(title: pinTitle) { _ in
+                if isPinned {
+                    self.delegate?.unpinTracker(at: indexPath)
+                } else {
+                    self.delegate?.pinTracker(at: indexPath)
+                }
+            }
+            
+            let editAction = UIAction(title: "Редактировать") { _ in
+                self.delegate?.editTracker(at: indexPath)
+            }
+            
+            let deleteAction = UIAction(title: "Удалить",
+                                  attributes: .destructive) { _ in
+                self.delegate?.deleteTracker(at: indexPath)
+            }
+            
+            let actions = [pinAction, editAction, deleteAction]
+            return UIMenu(title: "", children: actions)
+        })
+        
+        return configContextMenu
+    }
+}
+
+
+
+

@@ -7,59 +7,118 @@
 
 import UIKit
 
-final class OnboardingViewController: UIViewController {
+final class OnboardingViewController: UIPageViewController {
+    var onEnterButtonTapped: (() -> Void)?
     
-    private(set) var page: Pages
-    
-    private lazy var imageView: UIImageView = {
-        let imageView = UIImageView()
-        let image = UIImage(named: String(page.index))
-        imageView.image = image
-        return imageView
+    private lazy var pages: [UIViewController] = {
+        return [
+            PageContentViewController(imageName: "onboardingBlue", labelText: NSLocalizedString("backgroundImage.blue.text", comment: "")),
+            PageContentViewController(imageName: "onboardingRedView", labelText: NSLocalizedString("backgroundImage.red.text", comment: ""))
+        ]
     }()
     
-    private lazy var titleLabel: UILabel = {
-        let label = UILabel()
-        label.text = page.title
-        label.font = .ypBold32()
-        label.textColor = .black
-        label.numberOfLines = 3
-        label.textAlignment = .center
-        return label
+    private lazy var pageControl: UIPageControl = {
+        let pageControl = UIPageControl()
+        pageControl.numberOfPages = pages.count
+        pageControl.currentPage = 0
+        pageControl.currentPageIndicatorTintColor = .black
+        pageControl.pageIndicatorTintColor = .black.withAlphaComponent(0.3)
+        pageControl.addTarget(self, action: #selector(pageControlTapped(_:)), for: .valueChanged)
+        return pageControl
     }()
     
-    init(with page: Pages) {
-        self.page = page
-        
-        super.init(nibName: nil, bundle: nil)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+    private lazy var enterButton: UIButton = {
+        let button = UIButton()
+        button.backgroundColor = .black
+        button.layer.cornerRadius = 16
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+        button.setTitleColor(.white, for: .normal)
+        button.setTitle(NSLocalizedString("onboardingPageViewController.Button", comment: ""), for: .normal)
+        button.addTarget(self, action: #selector(enterButtonTapped), for: .touchUpInside)
+        return button
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        dataSource = self
+        delegate = self
         
-        addSubview()
-        setConstraints()
+        if let first = pages.first {
+            setViewControllers([first], direction: .forward, animated: true, completion: nil)
+        }
+        
+        setupUI()
     }
     
-    private func addSubview() {
-        [imageView, titleLabel].forEach{view.addViewsWithTranslatesAutoresizingMask($0)}
+    @objc private func enterButtonTapped() {
+        onEnterButtonTapped?()
     }
     
-    private func setConstraints() {
+    @objc private func pageControlTapped(_ sender: UIPageControl) {
+        let currentIndex = pageControl.currentPage
+        setViewControllers([pages[currentIndex]], direction: .forward, animated: true, completion: nil)
+    }
+    
+    private func setupUI() {
+        [pageControl, enterButton].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            view.addSubview($0)
+        }
+        
         NSLayoutConstraint.activate([
-            imageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            imageView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            imageView.topAnchor.constraint(equalTo: view.topAnchor),
-            imageView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            pageControl.bottomAnchor.constraint(equalTo: enterButton.topAnchor, constant: -24),
+            pageControl.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             
-            titleLabel.topAnchor.constraint(equalTo: view.centerYAnchor, constant: 26),
-            titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            titleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            enterButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            enterButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            enterButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -50),
+            enterButton.heightAnchor.constraint(equalToConstant: 60)
         ])
     }
+}
+
+extension OnboardingViewController: UIPageViewControllerDataSource {
+    func pageViewController(
+        _ pageViewController: UIPageViewController,
+        viewControllerBefore viewController: UIViewController) -> UIViewController? {
+            guard let viewControllerIndex = pages.firstIndex(of: viewController) else {
+                return nil
+            }
+            let previousIndex = viewControllerIndex - 1
+            
+            guard previousIndex >= 0 else {
+                return nil
+            }
+            
+            return pages[previousIndex]
+        }
+    
+    func pageViewController(
+        _ pageViewController: UIPageViewController,
+        viewControllerAfter viewController: UIViewController) -> UIViewController? {
+            guard let viewControllerIndex = pages.firstIndex(of: viewController) else {
+                return nil
+            }
+            let nextIndex = viewControllerIndex + 1
+            
+            guard nextIndex < pages.count else {
+                return nil
+            }
+            
+            return pages[nextIndex]
+        }
+}
+
+extension OnboardingViewController: UIPageViewControllerDelegate {
+    func pageViewController(
+        _ pageViewController: UIPageViewController,
+        didFinishAnimating finished: Bool,
+        previousViewControllers: [UIViewController],
+        transitionCompleted completed: Bool) {
+            if let currentViewController = pageViewController.viewControllers?.first,
+               let currentIndex = pages.firstIndex(of: currentViewController) {
+                pageControl.currentPage = currentIndex
+            }
+        }
 }
 
