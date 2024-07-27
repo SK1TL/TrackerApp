@@ -60,7 +60,7 @@ final class CategoryViewController: UIViewController {
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
         button.setTitleColor(.white, for: .normal)
         button.setTitle("Добавить категорию", for: .normal)
-        button.addTarget(CategoryViewController.self, action: #selector(addCategoryButtonTapped), for: .touchUpInside)
+        button.addTarget(self, action: #selector(addCategoryButtonTapped), for: .touchUpInside)
         return button
     }()
     

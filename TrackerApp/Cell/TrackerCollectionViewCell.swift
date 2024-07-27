@@ -58,7 +58,7 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         button.layer.cornerRadius = 17
         button.tintColor = .white
         button.addTarget(
-            TrackerCollectionViewCell.self,
+            self,
             action: #selector(quantityButtonTapped),
             for: .touchUpInside
         )

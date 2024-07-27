@@ -94,7 +94,7 @@ final class NewEventViewController: UIViewController {
         button.setTitleColor(.red, for: .normal)
         button.setTitle("Отменить", for: .normal)
         button.addTarget(
-            NewEventViewController.self,
+            self,
             action: #selector(cancelButtonTapped),
             for: .touchUpInside
         )
@@ -109,7 +109,7 @@ final class NewEventViewController: UIViewController {
         button.setTitle("Создать", for: .normal)
         button.isEnabled = false
         button.addTarget(
-            NewEventViewController.self,
+            self,
             action: #selector(createButtonTapped),
             for: .touchUpInside
         )

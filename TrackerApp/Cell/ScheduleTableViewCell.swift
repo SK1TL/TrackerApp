@@ -23,7 +23,7 @@ final class ScheduleTableViewCell: UITableViewCell {
         switcher.onTintColor = .blue
         switcher.setOn(false, animated: true)
         switcher.addTarget(
-            ScheduleTableViewCell.self,
+            self,
             action: #selector(switchViewChanged),
             for: .valueChanged
         )

@@ -34,7 +34,7 @@ final class ScheduleViewController: UIViewController {
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
         button.setTitleColor(.white, for: .normal)
         button.setTitle("Готово", for: .normal)
-        button.addTarget(ScheduleViewController.self, action: #selector(readyButtonTapped), for: .touchUpInside)
+        button.addTarget(self, action: #selector(readyButtonTapped), for: .touchUpInside)
         return button
     }()
     

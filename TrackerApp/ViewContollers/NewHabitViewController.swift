@@ -105,7 +105,7 @@ final class NewHabitViewController: UIViewController {
         button.setTitleColor(.red, for: .normal)
         button.setTitle("Отменить", for: .normal)
         button.addTarget(
-            NewHabitViewController.self,
+            self,
             action: #selector(cancelButtonTapped),
             for: .touchUpInside
         )
@@ -120,7 +120,7 @@ final class NewHabitViewController: UIViewController {
         button.setTitle("Создать", for: .normal)
         button.isEnabled = false
         button.addTarget(
-            NewHabitViewController.self,
+            self,
             action: #selector(createButtonTapped),
             for: .touchUpInside
         )

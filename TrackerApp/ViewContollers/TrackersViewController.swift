@@ -84,7 +84,7 @@ final class TrackersViewController: UIViewController {
         button.backgroundColor = .blueBack
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true
-        button.addTarget(TrackersViewController.self, action: #selector(filterButtonTapped), for: .touchUpInside)
+        button.addTarget(self, action: #selector(filterButtonTapped), for: .touchUpInside)
         return button
     }()
     
