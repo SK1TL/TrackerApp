@@ -12,11 +12,12 @@ final class StatisticViewController: UIViewController {
     private var completedTrackers: Set<TrackerRecord> = []
     private let trackerRecordStore = TrackerRecordStore()
     private let statView = CustomStatisticView(title: "0", subtitle: "Трекеров завершено")
+    private let colors = Colors()
     
     private let placeholderLabel: UILabel = {
         let label = UILabel()
         label.text = "Анализировать пока нечего"
-        label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
+        label.font = UIFont(name: "SFPro-Medium", size: 12)
         label.textAlignment = .center
         return label
     }()
@@ -45,7 +46,7 @@ final class StatisticViewController: UIViewController {
     }
     
     private func setupUI() {
-        view.backgroundColor = .white
+        view.backgroundColor = colors.viewBackgroundColor
         
         [placeholderImageView, placeholderLabel, statView].forEach{
             $0.translatesAutoresizingMaskIntoConstraints = false
