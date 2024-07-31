@@ -5,140 +5,139 @@
 //  Created by Артур Гайфуллин on 23.04.2024.
 //
 
+import Foundation
 import UIKit
 
 protocol ScheduleViewControllerDelegate: AnyObject {
-    func addNewSchedule(_ newSchedule: [WeekDays])
+    func didSelectDays(_ days: [WeekDay: Bool])
 }
 
-final class ScheduleViewController: UIViewController, UITableViewDelegate {
+final class ScheduleViewController: UIViewController {
     
+    private let titles = Constant.scheduleTableViewTitles
+    var selectedDays: [WeekDay: Bool] = [:]
     weak var delegate: ScheduleViewControllerDelegate?
-    var switchDays: [WeekDays] = []
-    private var week = WeekDays.allCases
     
-    private lazy var titleLabel: UILabel = {
-        let label = UILabel()
-        label.font = Resources.Fonts.ypMedium16()
-        label.text = "Расписание"
-        label.textColor = .YPBlack
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-    
-    private lazy var tableView: UITableView = {
+    private let tableView: UITableView = {
         let tableView = UITableView()
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
-        tableView.dataSource = self
-        tableView.delegate = self
         tableView.layer.cornerRadius = 16
-        tableView.clipsToBounds = true
-        tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
-        tableView.separatorColor = .YPGray
-        tableView.backgroundColor = .YPWhite
         tableView.isScrollEnabled = false
-        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.separatorStyle = .none
+        tableView.register(ScheduleTableViewCell.self, forCellReuseIdentifier: ScheduleTableViewCell.reuseIdentifier)
         return tableView
     }()
     
-    private lazy var completedButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("Готово", for: .normal)
-        button.setTitleColor(.YPWhite, for: .normal)
-        button.titleLabel?.font = Resources.Fonts.ypMedium16()
-        button.backgroundColor = .YPGray
+    private let readyButton: UIButton = {
+        let button = UIButton()
+        button.backgroundColor = .black
         button.layer.cornerRadius = 16
-        button.clipsToBounds = true
-        button.addTarget(self, action: #selector(completedButtonTapped), for: .touchUpInside)
-        button.isEnabled = false
-        button.translatesAutoresizingMaskIntoConstraints = false
+        button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
+        button.setTitleColor(.white, for: .normal)
+        button.setTitle("Готово", for: .normal)
+        button.addTarget(self, action: #selector(readyButtonTapped), for: .touchUpInside)
         return button
     }()
     
-    // MARK: - Lifecycle
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .YPWhite
-        addSubviews()
-        makeConstraints()
+        tableView.delegate = self
+        tableView.dataSource = self
+        
+        setupNavigationBar()
+        setupUI()
+        
+        WeekDay.allCases.forEach {
+            selectedDays[$0] = false
+        }
     }
     
-    // MARK: - Configure constraints / Add subviews
-    
-    private func addSubviews() {
-        view.addSubview(titleLabel)
-        view.addSubview(tableView)
-        view.addSubview(completedButton)
+    @objc private func readyButtonTapped() {
+        delegate?.didSelectDays(selectedDays)
+        navigationController?.popViewController(animated: true)
     }
     
-    private func makeConstraints() {
+    @objc private func switchViewChanged(sender: UISwitch) {
+        guard let cell = sender.superview?.superview as? ScheduleTableViewCell,
+              let indexPath = tableView.indexPath(for: cell) else { return }
+        
+        let day = WeekDay.allCases[indexPath.row]
+        selectedDays[day] = sender.isOn
+    }
+    
+    private func setupNavigationBar() {
+        navigationItem.title = "Расписание"
+        navigationController?.isNavigationBarHidden = false
+        navigationItem.hidesBackButton = true
+        view.backgroundColor = .white
+    }
+    
+    private func setupUI() {
+       
+        [tableView, readyButton].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            view.addSubview($0)
+        }
+        
         NSLayoutConstraint.activate([
-            titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            titleLabel.bottomAnchor.constraint(equalTo: view.topAnchor, constant: 40),
-            
-            tableView.topAnchor.constraint(equalTo: view.topAnchor, constant: 73),
+            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 27),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            tableView.heightAnchor.constraint(equalToConstant: 524),
+            tableView.heightAnchor.constraint(equalToConstant: 525),
             
-            completedButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50),
-            completedButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            completedButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            completedButton.heightAnchor.constraint(equalToConstant: 60),
+            readyButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
+            readyButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            readyButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            readyButton.heightAnchor.constraint(equalToConstant: 60)
         ])
-    }
-    
-    // MARK: - Action private func
-    
-    @objc private func completedButtonTapped() {
-        self.delegate?.addNewSchedule(self.switchDays)
-        dismiss(animated: true)
-    }
-    
-    @objc private func switchTap(_ sender: UISwitch) {
-        if sender.isOn {
-            switchDays.append(week[sender.tag])
-        } else {
-            if let index = switchDays.firstIndex(of: week[sender.tag]) {
-                switchDays.remove(at: index)
-            }
-        }
-        buttonIsEnabled(!switchDays.isEmpty)
     }
 }
 
-// MARK: - UITableViewDataSource
-
 extension ScheduleViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        WeekDays.allCases.count
+        titles.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let switcher = UISwitch()
-        switcher.onTintColor = .YPBlue
-        switcher.tag = indexPath.row
-        switcher.addTarget(self, action: #selector(switchTap), for: .valueChanged)
+        guard let cell = tableView.dequeueReusableCell(
+            withIdentifier: ScheduleTableViewCell.reuseIdentifier,
+            for: indexPath
+        ) as? ScheduleTableViewCell else { return UITableViewCell() }
         
-        let cell = UITableViewCell(style: .default, reuseIdentifier: "cell")
+        cell.switchView.addTarget(
+            self,
+            action: #selector(switchViewChanged),
+            for: .valueChanged
+        )
+        
+        cell.configure(
+            title: titles[indexPath.row],
+            isSwithcOn: selectedDays[WeekDay.allCases[indexPath.row]] ?? false
+        )
+        
         cell.selectionStyle = .none
-        cell.backgroundColor = .ypBackground
-        cell.textLabel?.text = week[indexPath.row].dayName
-        cell.textLabel?.font = Resources.Fonts.ypRegular17()
-        cell.accessoryView = switcher
+        cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        
+        let separator = UIView()
+        separator.backgroundColor = UIColor(red: 174/255, green: 175/255, blue: 180/255, alpha: 1.0)
+        separator.translatesAutoresizingMaskIntoConstraints = false
+        cell.contentView.addSubview(separator)
+        NSLayoutConstraint.activate([
+            separator.leadingAnchor.constraint(equalTo: cell.contentView.leadingAnchor, constant: 16),
+            separator.trailingAnchor.constraint(equalTo: cell.contentView.trailingAnchor, constant: -16),
+            separator.bottomAnchor.constraint(equalTo: cell.contentView.bottomAnchor),
+            separator.heightAnchor.constraint(equalToConstant: 1)
+        ])
+        
+        if indexPath.row == titles.count - 1 {
+            separator.isHidden = true
+        }
+        
         return cell
     }
-    
+}
+
+extension ScheduleViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        75
-    }
-    
-    // MARK: - Private func
-    
-    private func buttonIsEnabled(_ isOn: Bool) {
-        completedButton.isEnabled = isOn
-        completedButton.backgroundColor = isOn ? .YPBlack : .YPGray        
-        completedButton.setTitleColor(.YPWhite, for: .normal)
+        return 75
     }
 }

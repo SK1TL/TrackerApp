@@ -5,39 +5,34 @@
 //  Created by Артур Гайфуллин on 22.04.2024.
 //
 
-import Foundation
 import UIKit
 
 final class TabBarController: UITabBarController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        tabBar.backgroundColor = .YPWhite
-        tabBar.barTintColor = .YPWhite
-        tabBar.tintColor = .YPBlue
-        tabBar.unselectedItemTintColor = .YPGray
+        setupTabBar()
+    }
+    
+    private func setupTabBar() {
+        let trackersVC = UINavigationController(rootViewController: TrackersViewController())
+        let statisticVC = UINavigationController(rootViewController: StatisticViewController())
         
-        tabBar.layer.borderWidth = 0.50
-        tabBar.layer.borderColor = UIColor.YPGray.cgColor
-        tabBar.clipsToBounds = true
-        
-        let trackerViewController = UINavigationController(rootViewController: TrackersViewController())
-        
-        trackerViewController.tabBarItem = UITabBarItem(
-            title: "Трекеры",
-            image: Resources.SfSymbols.tracker?.withTintColor(.YPGray),
-            selectedImage: Resources.SfSymbols.tracker?.withTintColor(.YPBlue)
+        trackersVC.tabBarItem = UITabBarItem(
+            title: NSLocalizedString("Trackers", comment: "Title for the main screen"),
+            image: UIImage(systemName: "record.circle.fill"),
+            selectedImage: nil
         )
         
-        let statisticViewController = UINavigationController(rootViewController: StatisticViewController())
-        
-        statisticViewController.tabBarItem = UITabBarItem(
-            title: "Статистика",
-            image: Resources.SfSymbols.statistic?.withTintColor(.YPGray),
-            selectedImage: Resources.SfSymbols.statistic?.withTintColor(.YPBlue)
+        statisticVC.tabBarItem = UITabBarItem(
+            title: NSLocalizedString("Statistics", comment: "Title for the statistics tab"),
+            image: UIImage(systemName: "hare.fill"),
+            selectedImage: nil
         )
         
-        selectedIndex = 0
-        viewControllers = [trackerViewController, statisticViewController]
+        viewControllers = [
+        trackersVC,
+        statisticVC
+        ]
     }
 }

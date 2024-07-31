@@ -5,93 +5,141 @@
 //  Created by Артур Гайфуллин on 02.05.2024.
 //
 
-import UIKit
 import CoreData
+import UIKit
+
+enum StoreError: Error {
+    case decodeError
+}
 
 final class TrackerStore: NSObject {
+    public weak var delegate: TrackerCategoryStoreDelegate?
+    
     private let context: NSManagedObjectContext
-    private let weekDaysMarshalling = WeekDaysMarshalling()
-    private var insertedIndexes: IndexSet?
-    private var deletedIndexes: IndexSet?
-    private var updatedIndexes: IndexSet?
-    private var movedIndexes: Set<StoreUpdate.Move>?
+    private let uiColorMarshalling = UIColorMarshalling()
+    private var fetchedResultsController: NSFetchedResultsController<TrackerCoreData>?
     
     convenience override init() {
-        guard let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext else {
-            fatalError("TrackerStore Error")
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
+            preconditionFailure("couldn't get app delegate")
         }
-        self.init(context: context)
+        let context = appDelegate.persistentContainer.viewContext
+        do {
+            try self.init(context: context)
+        } catch {
+            preconditionFailure("Failed to initialize TrackerStore: \(error)")
+        }
     }
-    
-    init(context: NSManagedObjectContext) {
+
+    init(context: NSManagedObjectContext) throws {
         self.context = context
-    }
-    
-    private lazy var fetchedResultsController: NSFetchedResultsController<TrackerCoreData> = {
-        let fetchRequest = NSFetchRequest<TrackerCoreData>(entityName: "TrackerCoreData")
-        fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \TrackerCoreData.trackerColor, ascending: true)]
-        let fetchedResultsController = NSFetchedResultsController(
+        super.init()
+        
+        let fetchRequest = TrackerCoreData.fetchRequest()
+        fetchRequest.sortDescriptors = [
+            NSSortDescriptor(keyPath: \TrackerCoreData.name, ascending: true)
+        ]
+        let controller = NSFetchedResultsController(
             fetchRequest: fetchRequest,
             managedObjectContext: context,
             sectionNameKeyPath: nil,
             cacheName: nil
         )
-        fetchedResultsController.delegate = self
-        try? fetchedResultsController.performFetch()
-        
-        return fetchedResultsController
-    }()
-    
-    func makeTracker(from tracker: Tracker) throws -> TrackerCoreData {
-        let trackerCoreData = TrackerCoreData(context: context)
-        trackerCoreData.trackerId = tracker.id
-        trackerCoreData.trackerName = tracker.text
-        trackerCoreData.trackerEmoji = tracker.emoji
-        trackerCoreData.trackerColor = UIColor.hexString(from: tracker.color)
-        trackerCoreData.trackerSchedule = weekDaysMarshalling.convertWeekDaysToString(tracker.schedule)
-        
-        return trackerCoreData
+        controller.delegate = self
+        self.fetchedResultsController = controller
+        try controller.performFetch()
     }
     
-    func fetchTracker(with id: UUID) throws -> TrackerCoreData? {
-        let request = fetchedResultsController.fetchRequest
-        request.predicate = NSPredicate(format: "%K == %@", "trackerId", id.uuidString)
+    func addTracker(from tracker: Tracker) -> TrackerCoreData? {
+        guard let trackerCoreData = NSEntityDescription.entity(forEntityName: "TrackerCoreData", in: context) else { return nil }
+        let newTracker = TrackerCoreData(entity: trackerCoreData, insertInto: context)
+        newTracker.id = tracker.id
+        newTracker.name = tracker.name
+        newTracker.emoji = tracker.emoji
+        newTracker.schedule = tracker.schedule
+        newTracker.color = uiColorMarshalling.hexString(from: tracker.color)
+        
+        return newTracker
+    }
+    
+    func fetchTracker() throws -> [Tracker] {
+        let fetchRequest = NSFetchRequest<TrackerCoreData>(entityName: "TrackerCoreData")
+        do {
+            let trackerCoreDataArray = try context.fetch(fetchRequest)
+            let trackers = trackerCoreDataArray.map { trackerCoreData in
+                return Tracker(
+                    id: trackerCoreData.id ?? UUID(),
+                    name: trackerCoreData.name ?? "",
+                    color: uiColorMarshalling.color(from: trackerCoreData.color ?? ""),
+                    emoji: trackerCoreData.emoji ?? "",
+                    schedule: trackerCoreData.schedule ?? "")
+            }
+            return trackers
+        } catch {
+            throw StoreError.decodeError
+        }
+    }
+    
+    func fetchTrackerCoreData() throws -> [TrackerCoreData] {
+        do {
+            let fetchRequest = NSFetchRequest<TrackerCoreData>(entityName: "TrackerCoreData")
+            let trackerCoreDataArray = try context.fetch(fetchRequest)
+            return trackerCoreDataArray
+        } catch {
+            throw StoreError.decodeError
+        }
+    }
+ 
+    func changeTrackers(from trackersCoreData: TrackerCoreData) -> Tracker? {
+        guard
+            let id = trackersCoreData.id,
+            let name = trackersCoreData.name,
+            let color = trackersCoreData.color,
+            let emoji = trackersCoreData.emoji
+        else { return nil }
+        return Tracker(
+            id: id,
+            name: name,
+            color: uiColorMarshalling.color(from: color),
+            emoji: emoji,
+            schedule: trackersCoreData.schedule ?? "")
+    }
+    
+    func updateTracker(_ tracker: Tracker) -> TrackerCoreData? {
+        let fetchRequest: NSFetchRequest<TrackerCoreData> = TrackerCoreData.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "id == %@", tracker.id as CVarArg)
         
         do {
-            let record = try context.fetch(request).first
-            return record
+            let results = try context.fetch(fetchRequest)
+            if let trackerEntity = results.first {
+                trackerEntity.name = tracker.name
+                trackerEntity.color = uiColorMarshalling.hexString(from: tracker.color)
+                trackerEntity.emoji = tracker.emoji
+                trackerEntity.schedule = tracker.schedule
+                try context.save()
+                return trackerEntity
+            }
         } catch {
-            throw StoreError.decodingErrorInvalidTracker
+            print("Error updating tracker: \(error)")
+        }
+        return nil
+    }
+    
+    func deleteTracker(tracker: Tracker) {
+        do {
+            let targetTrackers = try fetchTrackerCoreData()
+            if let index = targetTrackers.firstIndex(where: {$0.id == tracker.id}) {
+                context.delete(targetTrackers[index])
+                try context.save()
+            }
+        } catch {
+            print("Ошибка при получении трекеров: \(error)")
         }
     }
 }
 
 extension TrackerStore: NSFetchedResultsControllerDelegate {
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-    }
-    
-    func controller(
-        _ controller: NSFetchedResultsController<NSFetchRequestResult>,
-        didChange anObject: Any,
-        at indexPath: IndexPath?,
-        for type: NSFetchedResultsChangeType,
-        newIndexPath: IndexPath?
-    ) {
-        switch type {
-        case .insert:
-            guard let indexPath else { fatalError() }
-            insertedIndexes?.insert(indexPath.item)
-        case .delete:
-            guard let indexPath else { fatalError() }
-            deletedIndexes?.insert(indexPath.item)
-        case .update:
-            guard let indexPath else { fatalError() }
-            updatedIndexes?.insert(indexPath.item)
-        case .move:
-            guard let oldIndexPath = indexPath, let newIndexPath else { fatalError() }
-            movedIndexes?.insert(.init(oldIndex: oldIndexPath.item, newIndex: newIndexPath.item))
-        @unknown default:
-            fatalError()
-        }
+        delegate?.didUpdateCategories()
     }
 }

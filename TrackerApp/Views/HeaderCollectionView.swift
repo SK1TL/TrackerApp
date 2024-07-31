@@ -13,14 +13,15 @@ final class HeaderCollectionView: UICollectionReusableView {
     
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.font = Resources.Fonts.ypBold19()
-        label.textColor = .YPBlack
+        label.font = UIFont.ypBold19()
+        label.textColor = .toggleBlackWhiteColor
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        
         addSubview()
         setConstraints()
     }
